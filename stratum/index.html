@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Stratum — AI Trading Strategy Analyzer by Woven Model. Backtest, analyze, and optimize trading strategies with AI-powered insights.">
+    <meta name="keywords" content="trading, backtesting, AI analysis, strategy optimization, stock market, RSI, SMA, quantitative trading, Woven Model">
+    <meta name="author" content="Jude Yearwood">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Stratum — AI Trading Strategy Analyzer | Woven Model">
+    <meta property="og:description" content="Backtest, analyze, and optimize trading strategies with AI-powered insights. Professional-grade desktop application for algorithmic traders and investors.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wovenmodel.com/stratum">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="favicon.ico">
+    <title>Stratum — AI Trading Strategy Analyzer | Woven Model</title>
+
+    <style>
+        :root {
+            --color-navy-950: #0a0f1e;
+            --color-navy-900: #0d1428;
+            --color-navy-800: #111b36;
+            --color-navy-700: #162244;
+            --color-navy-600: #1c2d56;
+            --color-navy-500: #243a6b;
+            --color-cyan-400: #22d3ee;
+            --color-cyan-500: #06b6d4;
+            --color-cyan-600: #0891b2;
+            --color-cyan-700: #0e7490;
+            --color-white: #ffffff;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            --color-green-400: #34d399;
+            --color-green-500: #10b981;
+            --color-red-400: #f87171;
+            --color-red-500: #ef4444;
+            --color-amber-400: #fbbf24;
+            --glass-bg: rgba(17, 27, 54, 0.6);
+            --glass-border: rgba(34, 211, 238, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glass-blur: blur(16px);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --transition-fast: 150ms ease;
+            --transition-normal: 300ms ease;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --max-width: 1200px;
+            --nav-height: 72px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-navy-950);
+            color: var(--color-gray-200);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: var(--color-cyan-400); text-decoration: none; transition: color var(--transition-fast); }
+        a:hover { color: var(--color-cyan-500); }
+        h1, h2, h3, h4, h5, h6 { line-height: 1.25; color: var(--color-white); }
+        h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; }
+        h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; }
+        h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        code {
+            font-family: var(--font-mono);
+            background: rgba(255,255,255,0.06);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--color-navy-800);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--color-navy-700);
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-white);
+            border-bottom: 2px solid var(--color-cyan-600);
+        }
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--color-gray-300);
+        }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 var(--glass-border);
+        }
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-white);
+            letter-spacing: -0.02em;
+        }
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-cyan-400), var(--color-cyan-600));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--color-navy-950);
+            flex-shrink: 0;
+        }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--color-gray-300);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+        .nav-links a:hover { color: var(--color-white); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950) !important;
+            padding: 0.55rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600 !important;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35); }
+
+        .page-header {
+            padding: calc(var(--nav-height) + 3rem) 1.5rem 3rem;
+            background: linear-gradient(180deg, var(--color-navy-900) 0%, var(--color-navy-950) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.06), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .page-header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .page-breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-gray-500);
+            margin-bottom: 1.5rem;
+        }
+        .page-breadcrumb a { color: var(--color-gray-400); }
+        .page-breadcrumb span { color: var(--color-gray-500); }
+        .page-header h1 { margin-bottom: 0.75rem; }
+        .page-header .subtitle {
+            font-size: 1.1rem;
+            color: var(--color-gray-400);
+            max-width: 650px;
+        }
+        .page-header .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-top: 1.5rem;
+        }
+        .page-header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-cyan-400);
+        }
+        .page-header .badge.green { color: var(--color-green-400); background: rgba(16, 185, 129, 0.1); }
+        .page-header .badge.amber { color: var(--color-amber-400); background: rgba(251, 191, 36, 0.1); }
+
+        .section {
+            padding: 4rem 1.5rem;
+            position: relative;
+        }
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-header { margin-bottom: 2.5rem; }
+        .section-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-cyan-400);
+            margin-bottom: 0.5rem;
+        }
+        .section-title { margin-bottom: 0.5rem; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.2rem;
+        }
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            transition: all var(--transition-normal);
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 { margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .feature-card p { color: var(--color-gray-400); font-size: 0.88rem; margin: 0; }
+
+        .tab-grid {
+            display: grid;
+            gap: 2rem;
+        }
+        .tab-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        .tab-card:hover { border-color: rgba(34, 211, 238, 0.25); }
+        .tab-card-header {
+            background: var(--color-navy-700);
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .tab-card-header h3 { font-size: 1.1rem; margin: 0; }
+        .tab-card-body { padding: 1.8rem; }
+        .tab-card-body p { color: var(--color-gray-300); font-size: 0.92rem; }
+        .tab-card-body ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .tab-card-body li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+            color: var(--color-gray-300);
+        }
+        .tab-card-body li::before {
+            content: '▸';
+            color: var(--color-cyan-400);
+            flex-shrink: 0;
+        }
+
+        .screenshot-mock {
+            background: var(--color-navy-800);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            margin: 1rem 0;
+        }
+        .screenshot-mock-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            background: var(--color-navy-900);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .screenshot-mock-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--color-gray-600);
+        }
+        .screenshot-mock-dot.red { background: #ef4444; border-color: #dc2626; }
+        .screenshot-mock-dot.yellow { background: #eab308; border-color: #d97706; }
+        .screenshot-mock-dot.green { background: #22c55e; border-color: #16a34a; }
+        .screenshot-mock-title {
+            font-size: 0.75rem;
+            color: var(--color-gray-500);
+            margin-left: 0.5rem;
+            font-family: var(--font-mono);
+        }
+        .screenshot-mock-body {
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            line-height: 1.7;
+            color: var(--color-gray-300);
+        }
+        .highlight-cyan { color: var(--color-cyan-400); }
+        .highlight-green { color: var(--color-green-400); }
+        .highlight-red { color: var(--color-red-400); }
+
+        .params-table { font-size: 0.85rem; }
+        .params-table td:first-child { font-weight: 600; color: var(--color-white); }
+        .params-table td:nth-child(2) { font-family: var(--font-mono); color: var(--color-cyan-400); }
+
+        .license-table td:first-child { font-weight: 500; }
+        .license-table td:nth-child(2) { text-align: center; }
+        .check-yes { color: var(--color-green-400); }
+        .check-no { color: var(--color-red-400); }
+
+        .perf-table td:nth-child(n+2) { text-align: center; font-family: var(--font-mono); }
+        .perf-table td:first-child { font-weight: 600; }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-navy-800), var(--color-navy-700));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .cta-section h2 { margin-bottom: 0.75rem; }
+        .cta-section p { color: var(--color-gray-400); max-width: 500px; margin: 0 auto 1.5rem; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            font-family: var(--font-sans);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(6, 182, 212, 0.4);
+            color: var(--color-navy-950);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-white);
+            border: 1px solid var(--color-gray-600);
+        }
+        .btn-secondary:hover { border-color: var(--color-cyan-400); color: var(--color-cyan-400); transform: translateY(-2px); }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+        .footer {
+            background: var(--color-navy-900);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 1.5rem 1.5rem;
+        }
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            text-align: center;
+            color: var(--color-gray-600);
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--color-gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: color var(--transition-fast);
+        }
+        .back-link:hover { color: var(--color-cyan-400); }
+        .back-link::before { content: '←'; }
+
+        @media (max-width: 768px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.8rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            .cta-section { padding: 2rem 1.2rem; }
+            .tab-card-header { padding: 1rem 1.2rem; }
+            .tab-card-body { padding: 1.2rem; }
+            .nav-links { display: none; }
+        }
+
+        /* Tab navigation inside page */
+        .page-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+        .page-tab {
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-gray-400);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            background: none;
+            font-family: var(--font-sans);
+        }
+        .page-tab:hover { color: var(--color-white); }
+        .page-tab.active {
+            color: var(--color-cyan-400);
+            background: rgba(6, 182, 212, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" aria-label="Woven Model Home">
+                <div class="nav-logo-icon">WM</div>
+                Woven Model
+            </a>
+            <div class="nav-links">
+                <a href="index.html#products">Products</a>
+                <a href="index.html#services">Services</a>
+                <a href="index.html#about">About</a>
+                <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="nav-cta" target="_blank" rel="noopener noreferrer">Book a Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <a href="index.html#products">Products</a>
+                <span>/</span>
+                <span>Stratum</span>
+            </div>
+            <a href="index.html#products" class="back-link">Back to Products</a>
+            <h1>Stratum — AI Trading Strategy Analyzer</h1>
+            <p class="subtitle">
+                A professional Windows desktop application that backtests, analyzes, and optimizes trading strategies
+                using historical market data. Powered by an RSI + SMA mean-reversion engine with AI-driven
+                recommendations and multi-symbol performance comparison.
+            </p>
+            <div class="badge-row">
+                <span class="badge">🐍 Python + PyQt6</span>
+                <span class="badge">📈 RSI + SMA Strategy</span>
+                <span class="badge">🤖 AI Analysis</span>
+                <span class="badge green">⚙ Parameter Optimization</span>
+                <span class="badge amber">🔑 Licensed (24h Trial)</span>
+                <span class="badge">📊 PDF / Excel / CSV / JSON</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" style="padding-top: 2rem;">
+        <div class="section-inner">
+
+            <!-- TAB: Overview / Features -->
+            <div class="page-tabs">
+                <span class="page-tab active" onclick="scrollToSection('overview')">Overview</span>
+                <span class="page-tab" onclick="scrollToSection('tabs-guide')">Tab Guide</span>
+                <span class="page-tab" onclick="scrollToSection('strategy')">Strategy</span>
+                <span class="page-tab" onclick="scrollToSection('config')">Configuration</span>
+                <span class="page-tab" onclick="scrollToSection('optimization')">Optimization</span>
+                <span class="page-tab" onclick="scrollToSection('workflows')">Workflows</span>
+                <span class="page-tab" onclick="scrollToSection('install')">Installation</span>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview">
+                <div class="section-header">
+                    <span class="section-label">Overview</span>
+                    <h2 class="section-title">What Is Stratum?</h2>
+                    <p class="section-subtitle" style="color: var(--color-gray-400); max-width: 700px;">
+                        Stratum answers one question: <strong>"Would this trading strategy have made money on this stock?"</strong>
+                        It replays years of historical market data bar-by-bar, simulates trades, and tells you exactly how it would have performed.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📊</div>
+                        <h3>Historical Backtesting</h3>
+                        <p>Replay years of daily market data with an RSI + SMA mean-reversion strategy. Analyze any symbol available on Yahoo Finance with configurable date ranges.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🤖</div>
+                        <h3>AI-Powered Analysis</h3>
+                        <p>Each symbol receives a 0-100 score based on profitability, risk, consistency, win rate, and trade frequency. Get clear recommendations: Recommended to Trade, Trade with Caution, or Avoid Trading.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">⚙</div>
+                        <h3>Parameter Optimization</h3>
+                        <p>Grid-search across 625 parameter combinations per symbol to find the optimal configuration. Supports multiple scoring metrics including composite, Sharpe, return, win rate, and profit factor.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔍</div>
+                        <h3>Multi-Symbol Comparison</h3>
+                        <p>Analyze 1-20+ symbols at once. Compare return %, Sharpe ratio, max drawdown, win rate, and total P&L side by side in an interactive results table.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📄</div>
+                        <h3>Professional Reporting</h3>
+                        <p>Export results as PDF professional reports, multi-sheet Excel workbooks with equity curves, CSV summaries, JSON exports, and individual trade logs.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔐</div>
+                        <h3>Licensed & Secure</h3>
+                        <p>24-hour free trial with full features. License keys unlock unlimited symbols, AI analysis, optimization, and all export formats. Machine-bound encrypted activation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">👁</div>
+                        <h3>Watchlist Management</h3>
+                        <p>Build and manage a watchlist of symbols with persistent storage across sessions. Check/uncheck symbols to include in analysis. One-click "Analyze Watchlist" action.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📉</div>
+                        <h3>Risk Management Built In</h3>
+                        <p>Configure stop-loss, take-profit, max holding periods, position sizing limits, and exposure caps. Per-symbol parameter overrides for volatility-adaptive trading.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📈</div>
+                        <h3>Equity Curves & Trade Logs</h3>
+                        <p>Exported Excel workbooks include equity curve charts and full trade history with entry/exit prices, P&L, and exit reasons for every simulated trade.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics Section -->
+            <div style="margin-top: 3rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Key Metrics You Get</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1.2rem; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-cyan-400);">+/- %</div>
+                        <div style="font-size: 0.8rem; color: var(--color-gray-500); margin-top: 0.3rem;">Total Return</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1.2rem; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-cyan-400);">Sharpe</div>
+                        <div style="font-size: 0.8rem; color: var(--color-gray-500); margin-top: 0.3rem;">Risk-Adj. Return</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1.2rem; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-cyan-400);">Max DD</div>
+                        <div style="font-size: 0.8rem; color: var(--color-gray-500); margin-top: 0.3rem;">Worst Drawdown</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1.2rem; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-cyan-400);">%</div>
+                        <div style="font-size: 0.8rem; color: var(--color-gray-500); margin-top: 0.3rem;">Win Rate</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1.2rem; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-cyan-400);">$</div>
+                        <div style="font-size: 0.8rem; color: var(--color-gray-500); margin-top: 0.3rem;">P&L</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1.2rem; text-align: center;">
+                        <div style="font-size: 1.8rem; font-weight: 800; color: var(--color-cyan-400);">#</div>
+                        <div style="font-size: 0.8rem; color: var(--color-gray-500); margin-top: 0.3rem;">Total Trades</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Output -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Sample Output</h3>
+                <p style="color: var(--color-gray-400); font-size: 0.9rem;">
+                    Using default settings on 5 major stocks over 2020-2025. The screenshot below shows actual results from a backtest run on AAPL, TSLA, NVDA, GOOGL, and AMD with the default RSI+SMA strategy configuration:
+                </p>
+                <img src="assets/Sampleoutput.png" alt="Stratum sample output showing backtest results table with 5 symbols and AI analysis ratings" style="width:100%; max-width:680px; border-radius: var(--radius-md); border: 2px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin: 1rem 0;">
+            </div>
+
+            <!-- TAB GUIDE -->
+            <div id="tabs-guide" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Tab Reference</span>
+                    <h2 class="section-title">Complete Tab-by-Tab Guide</h2>
+                    <p class="section-subtitle" style="color: var(--color-gray-400); max-width: 700px;">
+                        Stratum has 9 tabs. Each tab serves a specific function in the analysis workflow.
+                        Below is a detailed explanation of every tab, its features, controls, and typical usage.
+                    </p>
+                </div>
+
+                <div class="tab-grid">
+
+                    <!-- Dashboard Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">📊</span>
+                            <h3>Dashboard Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> The Dashboard provides a high-level summary of your last backtest run. It displays KPI cards, quick action buttons, and a text summary of the last analysis.</p>
+
+                            <img src="assets/stratum_dashboard.png" alt="Stratum Dashboard tab showing KPI cards, Quick Actions, and Last Analysis Summary" style="width:100%; max-width:680px; border-radius: var(--radius-md); border: 2px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin: 1rem 0;">
+
+                            <h4 style="margin-top: 1.2rem; color: white;">How It Works</h4>
+                            <ul>
+                                <li><strong>KPI Cards (4):</strong> Best Return, Total Trades, Avg Sharpe, Win Rate — all auto-populated after a backtest completes</li>
+                                <li><strong>Quick Actions:</strong> One-click navigation buttons to Backtest, Optimize, Reports, and Watchlist tabs</li>
+                                <li><strong>Summary Text:</strong> AI-generated overview showing recommendation counts, return ranges, and trade totals</li>
+                            </ul>
+                            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--color-gray-500);"><strong>Best Practice:</strong> Start here after every backtest to get an at-a-glance assessment of your results before diving into details.</p>
+                        </div>
+                    </div>
+
+                    <!-- Backtest Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">🔍</span>
+                            <h3>Backtest Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> The core analysis tab where you run historical backtests. Configure symbols, date range, capital, and short-selling settings, then execute the simulation.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Configuration Options</h4>
+                            <table class="params-table">
+                                <tr><td>Symbols</td><td>Comma-separated list (e.g., AAPL, TSLA, NVDA)</td></tr>
+                                <tr><td>Start / End Date</td><td>Calendar picker date range (default: 2020-01-01 to 2025-12-31)</td></tr>
+                                <tr><td>Initial Capital</td><td>$1,000 to $100,000,000</td></tr>
+                                <tr><td>Allow Short Selling</td><td>Toggle to enable short positions on overbought signals</td></tr>
+                            </table>
+
+                            <h4 style="color: white; margin-top: 1rem;">Results Table Columns</h4>
+                            <ul>
+                                <li><strong>Symbol</strong> — Ticker name</li>
+                                <li><strong>Return %</strong> — Total return as percentage (green = positive, red = negative)</li>
+                                <li><strong>Sharpe</strong> — Risk-adjusted return metric</li>
+                                <li><strong>Max DD %</strong> — Maximum peak-to-trough drawdown</li>
+                                <li><strong>Win Rate %</strong> — Percentage of profitable trades</li>
+                                <li><strong>Trades</strong> — Total number of executed trades</li>
+                                <li><strong>P&L</strong> — Total profit/loss in dollars</li>
+                                <li><strong>AI Score</strong> — AI-powered rating 0-100</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Typical Workflow</h4>
+                            <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                                <li style="margin-bottom: 0.3rem;">Enter 1-20 symbols separated by commas</li>
+                                <li style="margin-bottom: 0.3rem;">Set date range (recommended: 3+ years for statistical significance)</li>
+                                <li style="margin-bottom: 0.3rem;">Adjust initial capital to match your portfolio size</li>
+                                <li style="margin-bottom: 0.3rem;">Toggle short selling on/off based on your strategy</li>
+                                <li style="margin-bottom: 0.3rem;">Click <strong>"Run Backtest"</strong> — monitor progress bar and log output</li>
+                                <li style="margin-bottom: 0.3rem;">Results populate automatically. Review Dashboard, AI Analysis, and Reports</li>
+                            </ol>
+
+                            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--color-gray-500);"><strong>Note:</strong> Trial mode limits to 2 symbols per run. Licensed mode supports unlimited symbols.</p>
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">🤖</span>
+                            <h3>AI Analysis Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Provides intelligent symbol ratings (0-100) and trading recommendations based on backtest performance metrics. Requires a licensed activation — locked in trial mode.</p>
+
+                            <img src="assets/stratum_analysis.png" alt="Stratum AI Analysis tab showing symbol ratings table, recommendations, and rankings panel" style="width:100%; max-width:680px; border-radius: var(--radius-md); border: 2px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.5); margin: 1rem 0;">
+
+                            <h4 style="color: white; margin-top: 1rem;">Score Components</h4>
+                            <ul>
+                                <li><strong>Profitability (30%)</strong> — Higher raw returns = better score</li>
+                                <li><strong>Risk (20%)</strong> — Lower drawdown = better score</li>
+                                <li><strong>Consistency (20%)</strong> — Higher Sharpe = better score</li>
+                                <li><strong>Win Rate (15%)</strong> — Higher win % = better score</li>
+                                <li><strong>Frequency (15%)</strong> — More trades = higher statistical confidence</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Score Interpretation</h4>
+                            <table>
+                                <tr><th>Score Range</th><th>Recommendation</th><th>Action</th></tr>
+                                <tr><td><span class="highlight-green">70-100</span></td><td>✅ Recommended to Trade</td><td>Strong historical fit for the RSI+SMA strategy</td></tr>
+                                <tr><td><span class="highlight-cyan">45-69</span></td><td>⚠️ Trade with Caution</td><td>Moderate performance — monitor closely</td></tr>
+                                <tr><td><span class="highlight-red">0-44</span></td><td>❌ Avoid Trading</td><td>Poor fit for this strategy or insufficient data</td></tr>
+                            </table>
+
+                            <h4 style="color: white; margin-top: 1rem;">Rankings Panel</h4>
+                            <ul>
+                                <li><strong>Best Overall</strong> — Highest-scoring symbol</li>
+                                <li><strong>Best Return / Best Sharpe</strong> — Maximum values in each category</li>
+                                <li><strong>Lowest Drawdown</strong> — Safest performer</li>
+                                <li><strong>Most Stable / Most Volatile</strong> — Volatility classification</li>
+                            </ul>
+
+                            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--color-gray-500);"><strong>Important:</strong> AI analysis is based solely on historical data. It does not account for fundamental analysis, news, or market sentiment. Always perform your own due diligence.</p>
+                        </div>
+                    </div>
+
+                    <!-- Optimization Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">⚙</span>
+                            <h3>Optimization Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Run a grid search across strategy parameters to find the best-performing configuration for each symbol. Tests 625 combinations per symbol (5 × 5 × 5 × 5).</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Grid Search Ranges</h4>
+                            <table class="params-table">
+                                <tr><td>RSI Buy Threshold</td><td>22, 25, 28, 30, 33</td></tr>
+                                <tr><td>RSI Sell Threshold</td><td>67, 70, 72, 75, 78</td></tr>
+                                <tr><td>Stop Loss %</td><td>1.0%, 1.5%, 2.0%, 2.5%, 3.0%</td></tr>
+                                <tr><td>Take Profit %</td><td>3%, 4%, 5%, 6%, 8%</td></tr>
+                            </table>
+
+                            <h4 style="color: white; margin-top: 1rem;">Scoring Metrics</h4>
+                            <table>
+                                <tr><th>Metric</th><th>Best For</th></tr>
+                                <tr><td><code>composite</code></td><td>General purpose — balances return, risk, and consistency</td></tr>
+                                <tr><td><code>sharpe</code></td><td>Prioritizing smooth returns over raw profit</td></tr>
+                                <tr><td><code>return</code></td><td>Maximum profit regardless of volatility</td></tr>
+                                <tr><td><code>win_rate</code></td><td>High percentage of winning trades</td></tr>
+                                <tr><td><code>profit_factor</code></td><td>Win/loss size ratio</td></tr>
+                            </table>
+
+                            <h4 style="color: white; margin-top: 1rem;">Composite Scoring Formula</h4>
+                            <pre><code>score = sharpe × (1 + return_pct / 100) × (1 - max_dd_pct / 100)</code></pre>
+                            <p style="font-size: 0.85rem; color: var(--color-gray-400);">A score above <strong>1.0</strong> is strong. Above <strong>2.0</strong> is exceptional.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Optimization Workflow</h4>
+                            <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                                <li style="margin-bottom: 0.3rem;">Enter 1-3 representative symbols (use fewer for faster results)</li>
+                                <li style="margin-bottom: 0.3rem;">Select scoring metric (default: composite recommended)</li>
+                                <li style="margin-bottom: 0.3rem;">Click "Run Optimization" — ~30-60 seconds per symbol at default grid size</li>
+                                <li style="margin-bottom: 0.3rem;">Review results: Best Score, Best Params, Best Return, Sharpe, DD, Win Rate</li>
+                                <li style="margin-bottom: 0.3rem;">Identify common optimal parameter values across symbols</li>
+                                <li style="margin-bottom: 0.3rem;">Apply those values as new defaults in the Config tab</li>
+                                <li style="margin-bottom: 0.3rem;">Re-run backtest to validate the new configuration</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Config Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">⚙</span>
+                            <h3>Configuration Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Manage strategy parameters and save/load configuration profiles. The heart of Stratum's customization.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Strategy Parameters (RSI + SMA)</h4>
+                            <table class="params-table">
+                                <tr><td>SMA Period</td><td>5-200 bars (default: 20)</td></tr>
+                                <tr><td>RSI Period</td><td>5-50 bars (default: 14)</td></tr>
+                                <tr><td>RSI Buy Threshold</td><td>10-45 (default: 30) — oversold trigger</td></tr>
+                                <tr><td>RSI Sell Threshold</td><td>55-90 (default: 70) — overbought trigger</td></tr>
+                                <tr><td>Stop Loss %</td><td>0.5%-10% (default: 2%)</td></tr>
+                                <tr><td>Take Profit %</td><td>1%-50% (default: 5%)</td></tr>
+                                <tr><td>Max Holding Bars</td><td>1-50 (default: 5) — max bars before forced exit</td></tr>
+                                <tr><td>Max Exposure %</td><td>1%-50% (default: 10%) — per-position equity cap</td></tr>
+                                <tr><td>Risk % Per Trade</td><td>0.1%-5% (default: 1%) — position sizing factor</td></tr>
+                            </table>
+
+                            <h4 style="color: white; margin-top: 1rem;">Profile Management</h4>
+                            <ul>
+                                <li><strong>Save As...</strong> — Save current parameters as a named profile (JSON file)</li>
+                                <li><strong>Load</strong> — Load a previously saved profile from the dropdown</li>
+                                <li><strong>Profiles stored at:</strong> <code>stratum/profiles/*.json</code></li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Per-Symbol Overrides</h4>
+                            <p>Different stocks behave differently. Configure per-symbol parameters that take precedence over global defaults. For example:</p>
+                            <ul>
+                                <li><strong>High volatility (TSLA, NVDA):</strong> Wider stop-loss (3%), larger take-profit (8%), deeper RSI thresholds (25/75)</li>
+                                <li><strong>Low volatility (AAPL, MSFT):</strong> Tighter stop-loss (1.5%), smaller take-profit (4%), standard RSI (28/72)</li>
+                                <li><strong>Small cap / speculative (BB, PLUG):</strong> Very wide stop-loss (5%), let winners run (15% take-profit), tiny position sizing (0.5%)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Watchlist Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">👁</span>
+                            <h3>Watchlist Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Build and manage a list of symbols you want to track and analyze regularly. Watchlist persists across sessions via the active profile.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Features</h4>
+                            <ul>
+                                <li><strong>Add Symbol:</strong> Type a ticker and click "Add to Watchlist"</li>
+                                <li><strong>Checkboxes:</strong> Each symbol has a checkbox — only checked symbols are included in analysis</li>
+                                <li><strong>Remove Selected:</strong> Select symbols and click to remove them</li>
+                                <li><strong>Analyze Watchlist:</strong> Automatically sets checked symbols in the Backtest tab and switches to it</li>
+                                <li><strong>Persistence:</strong> Watchlist is saved and loaded with your active profile</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Default Watchlist</h4>
+                            <p>Pre-populated with: AAPL, TSLA, NVDA, GOOGL, AMD, META, MSFT, AMZN — all checked by default.</p>
+                        </div>
+                    </div>
+
+                    <!-- Reports Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">📊</span>
+                            <h3>Reports Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Export backtest results and AI analysis in multiple professional formats.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Export Formats</h4>
+                            <table>
+                                <tr><th>Format</th><th>Contents</th></tr>
+                                <tr><td><strong>PDF</strong></td><td>Professional report with formatted tables and summary text</td></tr>
+                                <tr><td><strong>Excel</strong></td><td>Multi-sheet workbook: Performance, Trades, AI Analysis, Equity Curves</td></tr>
+                                <tr><td><strong>CSV</strong></td><td>Summary data for all symbols</td></tr>
+                                <tr><td><strong>JSON</strong></td><td>Full structured data export for programmatic use</td></tr>
+                                <tr><td><strong>Trades CSV</strong></td><td>Individual trade logs with entry/exit, P&L, and exit reason</td></tr>
+                            </table>
+
+                            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--color-gray-500);"><strong>Note:</strong> Requires a licensed activation. Export is locked in trial mode.</p>
+                        </div>
+                    </div>
+
+                    <!-- License Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">🔑</span>
+                            <h3>License Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Manage activation and licensing. View trial status, activate a license key, or deactivate the current license.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Trial Mode (24-Hour Free Trial)</h4>
+                            <ul>
+                                <li>Backtest up to <strong>2 symbols</strong> per run</li>
+                                <li>Watchlist management, profile loading</li>
+                                <li><strong>Locked:</strong> AI Analysis, Optimization, Export (PDF/Excel/CSV/JSON), profile saving, per-symbol settings</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Getting Started (Trial)</h4>
+                            <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                                <li style="margin-bottom: 0.3rem;">Launch Stratum — a <strong>24-hour free trial</strong> starts automatically on first run</li>
+                                <li style="margin-bottom: 0.3rem;">The License tab shows remaining trial time and which features are locked</li>
+                            </ol>
+
+                            <h4 style="color: white; margin-top: 1rem;">License Activation (From Within the App)</h4>
+                            <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                                <li style="margin-bottom: 0.3rem;">Purchase a license key from Woven Model (key format: <code>XXXXX-XXXXX-XXXXX-XXXXX</code>)</li>
+                                <li style="margin-bottom: 0.3rem;">Open the <strong>License tab</strong> in Stratum</li>
+                                <li style="margin-bottom: 0.3rem;">Paste your license key into the activation field and click <strong>Activate</strong></li>
+                                <li style="margin-bottom: 0.3rem;">All features unlock immediately — no restart needed</li>
+                            </ol>
+
+                            <h4 style="color: white; margin-top: 1rem;">Feature Comparison</h4>
+                            <table class="license-table">
+                                <tr><th>Feature</th><th>Trial (24h)</th><th>Licensed</th></tr>
+                                <tr><td>Backtest up to 2 symbols</td><td class="check-yes">✅</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Backtest unlimited symbols</td><td class="check-no">❌</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Watchlist management</td><td class="check-yes">✅</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Load saved profiles</td><td class="check-yes">✅</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Save profiles</td><td class="check-no">❌</td><td class="check-yes">✅</td></tr>
+                                <tr><td>AI Analysis</td><td class="check-no">❌</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Parameter Optimization</td><td class="check-no">❌</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Export Reports</td><td class="check-no">❌</td><td class="check-yes">✅</td></tr>
+                                <tr><td>Per-symbol customization</td><td class="check-no">❌</td><td class="check-yes">✅</td></tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">⚙</span>
+                            <h3>Settings Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Configure general application settings and perform maintenance actions.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">General Settings</h4>
+                            <ul>
+                                <li><strong>Commission per Share ($):</strong> Adds a per-share commission cost to each simulated fill (default: $0.00)</li>
+                                <li><strong>Slippage %:</strong> Simulates market impact by adjusting fill price (default: 0.05%)</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Maintenance Actions</h4>
+                            <ul>
+                                <li><strong>Clear All Cached Data:</strong> Deletes all downloaded Parquet files from <code>stratum/data/</code>. Next backtest re-fetches from Yahoo Finance.</li>
+                                <li><strong>Reset to Defaults:</strong> Restores all configuration and strategy parameters to factory defaults. Does not affect license activation.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Strategy Engine Section -->
+            <div id="strategy" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Strategy</span>
+                    <h2 class="section-title">The RSI + SMA Strategy Engine</h2>
+                </div>
+
+                <div style="background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">How It Works</h3>
+                    <p>Stratum's strategy engine simulates an <strong>RSI + SMA</strong> mean-reversion approach — a classic combination of trend filtering and momentum timing.</p>
+
+                    <table style="margin-top: 1rem;">
+                        <tr><th>Component</th><th>Purpose</th><th>Typical Setting</th></tr>
+                        <tr><td><strong>SMA(20)</strong></td><td>Trend filter — identifies overall direction</td><td>20 periods</td></tr>
+                        <tr><td><strong>RSI(14)</strong></td><td>Momentum oscillator — measures speed/change of price</td><td>14 periods</td></tr>
+                        <tr><td><strong>Buy Signal</strong></td><td>RSI drops below threshold = oversold = potential bounce</td><td>< 30</td></tr>
+                        <tr><td><strong>Sell Signal</strong></td><td>RSI rises above threshold = overbought = potential pullback</td><td>> 70</td></tr>
+                    </table>
+
+                    <h4 style="color: white; margin-top: 1.5rem;">The Logic</h4>
+                    <pre><code>IF RSI < rsi_buy_threshold:
+    → BUY (anticipate oversold reversal)
+ELSE IF RSI > rsi_sell_threshold:
+    → SELL (short) (anticipate overbought reversal)
+ELSE:
+    → HOLD (no signal)</code></pre>
+
+                    <h4 style="color: white; margin-top: 1.5rem;">Exit Conditions (in priority order)</h4>
+                    <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                        <li style="margin-bottom: 0.3rem;"><strong>Take Profit</strong> — Gain exceeds target → close</li>
+                        <li style="margin-bottom: 0.3rem;"><strong>Stop Loss</strong> — Loss exceeds threshold → close</li>
+                        <li style="margin-bottom: 0.3rem;"><strong>Max Loss</strong> — Catastrophic loss cap → close</li>
+                        <li style="margin-bottom: 0.3rem;"><strong>Max Holding</strong> — Position held too long → close</li>
+                    </ol>
+
+                    <h4 style="color: white; margin-top: 1.5rem;">Position Sizing Formula</h4>
+                    <pre><code>qty_risk = equity × risk_pct / (price × stop_loss_pct)
+qty_cap  = equity × max_exposure_pct / price
+qty      = min(qty_risk, qty_cap)</code></pre>
+                    <p>The smaller of risk-based sizing and max exposure cap is used. Position is rejected if <code>qty < 1</code>.</p>
+                </div>
+            </div>
+
+            <!-- Configuration Profiles Section -->
+            <div id="config" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Configuration</span>
+                    <h2 class="section-title">Parameter Configuration Playbook</h2>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🛡️</div>
+                        <h3>Conservative (Low Risk)</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-gray-300);">
+                            RSI Buy: 25<br>
+                            RSI Sell: 75<br>
+                            Stop Loss: 1.5%<br>
+                            Take Profit: 4%<br>
+                            Max Exposure: 5%<br>
+                            Risk/Trade: 0.5%
+                        </p>
+                        <p style="margin-top: 0.5rem; font-size: 0.82rem;"><strong>Best for:</strong> Blue chips, low volatility, capital preservation</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">⚡</div>
+                        <h3>Aggressive (High Risk)</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-gray-300);">
+                            RSI Buy: 35<br>
+                            RSI Sell: 65<br>
+                            Stop Loss: 3%<br>
+                            Take Profit: 8%<br>
+                            Max Exposure: 15%<br>
+                            Risk/Trade: 2%
+                        </p>
+                        <p style="margin-top: 0.5rem; font-size: 0.82rem;"><strong>Best for:</strong> High volatility, small caps, momentum trading</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">⚖️</div>
+                        <h3>Balanced (Medium Risk)</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-gray-300);">
+                            RSI Buy: 30<br>
+                            RSI Sell: 70<br>
+                            Stop Loss: 2%<br>
+                            Take Profit: 5%<br>
+                            Max Exposure: 10%<br>
+                            Risk/Trade: 1%
+                        </p>
+                        <p style="margin-top: 0.5rem; font-size: 0.82rem;"><strong>Best for:</strong> Most equities, general purpose</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔻</div>
+                        <h3>Short-Only</h3>
+                        <p style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--color-gray-300);">
+                            Allow Shorts: ON<br>
+                            RSI Sell: 68<br>
+                            Stop Loss: 2%<br>
+                            Take Profit: 4%<br>
+                            Max Holding: 5 bars
+                        </p>
+                        <p style="margin-top: 0.5rem; font-size: 0.82rem;"><strong>Best for:</strong> Bear markets, overvalued sectors</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optimization Section -->
+            <div id="optimization" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Optimization</span>
+                    <h2 class="section-title">Optimization Tactics</h2>
+                </div>
+
+                <div style="background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Finding the Best Parameters</h3>
+                    <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.92rem;">
+                        <li style="margin-bottom: 0.5rem;">Run <strong>Optimize</strong> tab on 1-2 representative symbols</li>
+                        <li style="margin-bottom: 0.5rem;">Wait for grid search to complete (625 combinations per symbol)</li>
+                        <li style="margin-bottom: 0.5rem;">Look at the <strong>"Best Params"</strong> column for each symbol</li>
+                        <li style="margin-bottom: 0.5rem;">Identify the most common parameter values across symbols</li>
+                        <li style="margin-bottom: 0.5rem;">Apply those as your new defaults</li>
+                        <li style="margin-bottom: 0.5rem;">Re-run backtest to validate the new defaults</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Workflows Section -->
+            <div id="workflows" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Workflows</span>
+                    <h2 class="section-title">Typical User Workflows</h2>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📋</div>
+                        <h3>Building a Watchlist</h3>
+                        <p style="font-size: 0.85rem;">
+                            1. Start with 10-20 candidate symbols<br>
+                            2. Run backtest on all symbols<br>
+                            3. Go to AI Analysis tab<br>
+                            4. Note symbols with "Recommended to Trade"<br>
+                            5. Add those to your watchlist<br>
+                            6. Run optimization on watchlist symbols<br>
+                            7. Apply best params as per-symbol overrides
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔬</div>
+                        <h3>Comparing Multiple Symbols</h3>
+                        <p style="font-size: 0.85rem;">
+                            1. Run backtest with all symbols at once<br>
+                            2. Sort results table by different metrics<br>
+                            3. Check equity curves in exported Excel<br>
+                            4. Review AI Analysis rankings for qualitative comparison
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔄</div>
+                        <h3>Validating a Strategy Change</h3>
+                        <p style="font-size: 0.85rem;">
+                            1. Save current profile in Config tab<br>
+                            2. Make parameter changes<br>
+                            3. Run backtest on same symbols/dates<br>
+                            4. Compare results side by side<br>
+                            5. If worse, load the previous profile
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">✅</div>
+                        <h3>Pre-Trade Checklist</h3>
+                        <p style="font-size: 0.82rem;">
+                            □ Symbol backtested over at least 2 years?<br>
+                            □ At least 20 trades in the backtest?<br>
+                            □ AI score above 50?<br>
+                            □ Win rate above 40%?<br>
+                            □ Max drawdown acceptable for your risk tolerance?<br>
+                            □ Per-symbol parameters configured?
+                        </p>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Review Cadence</h3>
+                <table>
+                    <tr><th>Frequency</th><th>Actions</th></tr>
+                    <tr><td><strong>Weekly</strong></td><td>Run backtests on current watchlist • Update per-symbol parameters • Export updated reports</td></tr>
+                    <tr><td><strong>Monthly</strong></td><td>Run optimization on all watchlist symbols • Review AI analysis rankings • Adjust strategy profiles • Export full report package</td></tr>
+                    <tr><td><strong>Quarterly</strong></td><td>Evaluate strategy performance across all symbols • Add/remove watchlist symbols • Review and update risk parameters • Archive reports</td></tr>
+                </table>
+            </div>
+
+            <!-- Installation Section -->
+            <div id="install" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Installation</span>
+                    <h2 class="section-title">Getting Started</h2>
+                </div>
+
+                <div style="background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Quick Start (Portable — No Install Needed)</h3>
+                    <p style="color: var(--color-gray-300); font-size: 0.92rem;">
+                        The easiest way to use Stratum is the <strong>portable executable</strong> — no Python or dependency setup required:
+                    </p>
+                    <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                        <li style="margin-bottom: 0.3rem;">Download <code>Stratum.exe</code> from the product page or your license delivery email</li>
+                        <li style="margin-bottom: 0.3rem;">Double-click <code>Stratum.exe</code> to launch the application</li>
+                        <li style="margin-bottom: 0.3rem;">On first launch, choose <strong>Start 24-Hour Free Trial</strong> or activate your license key</li>
+                        <li style="margin-bottom: 0.3rem;">Enter stock symbols, set your date range, and click <strong>Run Backtest</strong></li>
+                    </ol>
+
+                    <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">System Requirements</h3>
+                    <ul>
+                        <li><strong>OS:</strong> Windows 10 or 11 (64-bit)</li>
+                        <li><strong>Disk:</strong> 500 MB minimum (more for cached data)</li>
+                        <li><strong>RAM:</strong> 4 GB minimum, 8 GB recommended</li>
+                    </ul>
+
+    <h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">Install with MSI Setup</h3>
+    <p style="color: var(--color-gray-400); font-size: 0.9rem;">For a proper installed version with start menu shortcuts and uninstall support, use the MSI installer:</p>
+    <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+        <li style="margin-bottom: 0.3rem;">Download <code>StratumSetup.msi</code> from your license delivery email or the product page</li>
+        <li style="margin-bottom: 0.3rem;">Double-click <code>StratumSetup.msi</code> to launch the Windows Installer</li>
+        <li style="margin-bottom: 0.3rem;">Follow the on-screen prompts — choose installation path and confirm</li>
+        <li style="margin-bottom: 0.3rem;">Launch Stratum from the <strong>Start Menu</strong> or <strong>desktop shortcut</strong></li>
+        <li style="margin-bottom: 0.3rem;">On first launch, choose <strong>Start 24-Hour Free Trial</strong> or activate your license key</li>
+        <li style="margin-bottom: 0.3rem;">Enter stock symbols, set your date range, and click <strong>Run Backtest</strong></li>
+    </ol>
+    <p style="color: var(--color-gray-400); font-size: 0.88rem;">The MSI installs all dependencies, adds Start Menu entries, and provides an easy uninstall path via Add/Remove Programs.</p><h3 style="margin-top: 1.5rem; margin-bottom: 1rem;">How to Activate</h3>
+                    <ol style="list-style: decimal; padding-left: 1.2rem; color: var(--color-gray-300); font-size: 0.9rem;">
+                        <li style="margin-bottom: 0.3rem;">Launch Stratum — the <strong>License tab</strong> opens automatically or is accessible from the tab bar</li>
+                        <li style="margin-bottom: 0.3rem;">If you haven't purchased a key yet, start a <strong>24-hour free trial</strong> with one click</li>
+                        <li style="margin-bottom: 0.3rem;">To activate a full license, paste your key (format: <code>XXXXX-XXXXX-XXXXX-XXXXX</code>) into the activation field and click <strong>Activate</strong></li>
+                        <li style="margin-bottom: 0.3rem;">All features unlock immediately — no app restart required</li>
+                        <li style="margin-bottom: 0.3rem;">Need a key? <a href="https://calendar.app.google/VcNdH476r22az1kj7" target="_blank" rel="noopener noreferrer">Schedule a consultation</a> with Woven Model to purchase a license</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-section">
+                <h2>Ready to Analyze Your Trading Strategy?</h2>
+                <p>Get started with a 24-hour free trial or contact us for a full license.</p>
+                <div class="btn-row">
+                    <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Schedule Your Consultation</a>
+                    <a href="index.html#products" class="btn btn-secondary">View All Products</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <p>Stratum v1.1.0 | © Woven Model. All rights reserved.</p>
+            <p style="font-size: 0.78rem; margin-top: 0.5rem; color: var(--color-gray-600);">
+                This software is a decision-support tool. It does not place trades. Past performance does not guarantee future results.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Update active tab
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Sticky page tabs on scroll
+        window.addEventListener('scroll', function() {
+            const sections = ['overview', 'tabs-guide', 'strategy', 'config', 'optimization', 'workflows', 'install'];
+            let current = 'overview';
+            for (const id of sections) {
+                const el = document.getElementById(id);
+                if (el && el.getBoundingClientRect().top < 200) {
+                    current = id;
+                }
+            }
+            document.querySelectorAll('.page-tab').forEach(t => {
+                t.classList.toggle('active', t.getAttribute('onclick')?.includes(current));
+            });
+        });
+    </script>
+</body>
+</html>

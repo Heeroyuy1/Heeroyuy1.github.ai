@@ -648,6 +648,301 @@
         }
 
         /* ============================================
+           PRODUCTS SECTION
+           ============================================ */
+        .product-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        .product-card:hover {
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            border-color: rgba(34, 211, 238, 0.3);
+        }
+        .product-visual {
+            background: linear-gradient(135deg, var(--color-navy-700), var(--color-navy-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            min-height: 320px;
+            position: relative;
+            overflow: hidden;
+        }
+        .product-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.06), transparent 60%);
+            pointer-events: none;
+        }
+        .product-screenshot {
+            width: 100%;
+            max-width: 420px;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--glass-border);
+            background: var(--color-navy-800);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .product-screenshot-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: var(--color-navy-900);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .product-screenshot-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--color-gray-600);
+        }
+        .product-screenshot-dot.red { background: #ef4444; border-color: #dc2626; }
+        .product-screenshot-dot.yellow { background: #eab308; border-color: #d97706; }
+        .product-screenshot-dot.green { background: #22c55e; border-color: #16a34a; }
+        .product-screenshot-title {
+            font-size: 0.7rem;
+            color: var(--color-gray-500);
+            margin-left: 0.5rem;
+            font-family: var(--font-mono);
+        }
+        .product-screenshot-body {
+            padding: 14px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            line-height: 1.6;
+            color: var(--color-gray-300);
+        }
+        .product-screenshot-body .pii-hl {
+            background: #ffe600;
+            color: #0a0a0a;
+            font-weight: 700;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .product-screenshot-body .pii-remove {
+            display: inline-block;
+            background: #ff3b3b;
+            color: #fff;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            margin-top: 8px;
+        }
+        .product-body {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .product-body .product-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-cyan-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            width: fit-content;
+        }
+        .product-body h3 {
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            margin-bottom: 0.5rem;
+        }
+        .product-body .product-subtitle {
+            color: var(--color-gray-400);
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+        }
+        .product-body p {
+            color: var(--color-gray-300);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+        .product-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin: 1.2rem 0 1.5rem;
+        }
+        .product-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-gray-200);
+        }
+        .product-feature-item-icon {
+            color: var(--color-cyan-400);
+            flex-shrink: 0;
+            font-size: 0.7rem;
+        }
+        .product-tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .product-tech-tag {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            color: var(--color-gray-400);
+            font-family: var(--font-mono);
+        }
+        .product-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+        .product-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.65rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            font-family: var(--font-sans);
+        }
+        .product-btn-primary {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950);
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.2);
+        }
+        .product-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(6, 182, 212, 0.35);
+            color: var(--color-navy-950);
+        }
+        .product-btn-secondary {
+            background: transparent;
+            color: var(--color-white);
+            border: 1px solid var(--color-gray-600);
+        }
+        .product-btn-secondary:hover {
+            border-color: var(--color-cyan-400);
+            color: var(--color-cyan-400);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .product-card { grid-template-columns: 1fr; }
+            .product-visual { min-height: 240px; padding: 1.2rem; }
+            .product-body { padding: 1.5rem; }
+            .product-features { grid-template-columns: 1fr; }
+        }
+
+        /* ============================================
+           PRODUCT CAROUSEL
+           ============================================ */
+        .products-carousel {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .carousel-track-wrapper {
+            flex: 1;
+            overflow: hidden;
+            border-radius: var(--radius-xl);
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            color: var(--color-white);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            box-shadow: var(--glass-shadow);
+        }
+        .carousel-arrow:hover {
+            background: rgba(34, 211, 238, 0.2);
+            border-color: var(--color-cyan-400);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .carousel-arrow-left {
+            left: -56px;
+        }
+        .carousel-arrow-right {
+            right: -56px;
+        }
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+        }
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--color-gray-600);
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            transition: all var(--transition-fast);
+        }
+        .carousel-dot.active {
+            background: var(--color-cyan-400);
+            border-color: var(--color-cyan-400);
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+        }
+        .carousel-dot:hover {
+            border-color: var(--color-cyan-400);
+        }
+        @media (max-width: 900px) {
+            .carousel-arrow-left { left: -16px; }
+            .carousel-arrow-right { right: -16px; }
+            .carousel-arrow { width: 36px; height: 36px; font-size: 1rem; }
+        }
+
+        /* ============================================
            PROJECTS SECTION
            ============================================ */
         .projects-grid {
@@ -1151,10 +1446,11 @@
             <div class="nav-links" id="nav-links" role="menubar">
                 <a href="#about" role="menuitem">About</a>
                 <a href="#services" role="menuitem">Services</a>
+                <a href="#products" role="menuitem">Products</a>
                 <a href="#projects" role="menuitem">Projects</a>
                 <a href="#process" role="menuitem">Process</a>
                 <a href="#blog" role="menuitem">Insights</a>
-                <a href="#contact" class="nav-cta" role="menuitem">Request Consultation</a>
+                <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="nav-cta" role="menuitem" target="_blank" rel="noopener noreferrer">Schedule a Consultation</a>
             </div>
         </div>
         <div class="nav-overlay" id="nav-overlay"></div>
@@ -1177,7 +1473,7 @@
                     Helping organizations leverage AI, automation, cloud technologies, and custom software to improve efficiency, security, and growth.
                 </p>
                 <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">
+                    <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
                         <span>Schedule Consultation</span>
                         <span aria-hidden="true">→</span>
                     </a>
@@ -1342,6 +1638,206 @@
                         <div class="service-feature"><span class="service-feature-icon">◆</span> Endpoint Management</div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         PRODUCTS SECTION
+         ============================================ -->
+    <section class="section" id="products" aria-label="Products" style="background: var(--color-navy-900);">
+        <div class="section-inner">
+            <div class="section-header fade-in">
+                <span class="section-label">Products</span>
+                <h2 class="section-title">Software We Build</h2>
+                <p class="section-subtitle">Ready-to-use applications crafted by Woven Model for real-world needs.</p>
+            </div>
+
+            <div class="products-carousel">
+                <button class="carousel-arrow carousel-arrow-left" id="carousel-prev" aria-label="Previous product">◀</button>
+                <div class="carousel-track-wrapper">
+                    <div class="carousel-track" id="carousel-track">
+
+                        <!-- Slide 1: PII Remover -->
+                        <div class="carousel-slide">
+                            <div class="product-card">
+                                <div class="product-visual">
+                                    <div class="product-screenshot">
+                                        <div class="product-screenshot-header">
+                                            <span class="product-screenshot-dot red"></span>
+                                            <span class="product-screenshot-dot yellow"></span>
+                                            <span class="product-screenshot-dot green"></span>
+                                            <span class="product-screenshot-title">Woven Model PII Remover</span>
+                                        </div>
+                                        <div class="product-screenshot-body">
+                                            ┌─────────────────────────────────┐<br>
+                                            │  Paste your prompt here...       │<br>
+                                            │  "Hi, I'm <span class="pii-hl">John Doe</span>,         │<br>
+                                            │  my SSN is <span class="pii-hl">123-45-6789</span>.    │<br>
+                                            │  Please process my request for   │<br>
+                                            │  <span class="pii-hl">$52,000</span> at               │<br>
+                                            │  <span class="pii-hl">123 Main St</span>."            │<br>
+                                            │                                   │<br>
+                                            │  [<span class="pii-remove">Remove PII (after confirm)</span>]<br>
+                                            └─────────────────────────────────┘<br>
+                                            <br>
+                                            ✦ <strong>4 matches</strong> — click to redact
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-body">
+                                    <div class="product-tag"><span>✦</span> Desktop App</div>
+                                    <h3>Woven Model PII Remover</h3>
+                                    <p class="product-subtitle">Protect sensitive data before it reaches AI prompts, documents, or workflows — with zero cloud uploads.</p>
+                                    <p>
+                                        An <strong>on-device</strong> desktop tool that detects, highlights, and redacts sensitive
+                                        information from text before you use it in prompts, documents, or workflows.
+                                        Detection runs entirely locally — nothing leaves your machine.
+                                    </p>
+                                    <div class="product-features">
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Local PII detection</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Highlighted preview</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Confirm-before-redact</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> One-click clipboard copy</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> No data leaves device</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Zero web server needed</div>
+                                    </div>
+                                    <div class="product-tech-tags">
+                                        <span class="product-tech-tag">Electron</span>
+                                        <span class="product-tech-tag">JavaScript</span>
+                                        <span class="product-tech-tag">Windows</span>
+                                        <span class="product-tech-tag">Local</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <a href="#contact" class="product-btn product-btn-primary">Download Setup</a>
+                                        <a href="#contact" class="product-btn product-btn-secondary">Portable Version</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: DocToAudio -->
+                        <div class="carousel-slide">
+                            <div class="product-card">
+                                <div class="product-visual">
+                                    <div class="product-screenshot">
+                                        <div class="product-screenshot-header">
+                                            <span class="product-screenshot-dot red"></span>
+                                            <span class="product-screenshot-dot yellow"></span>
+                                            <span class="product-screenshot-dot green"></span>
+                                            <span class="product-screenshot-title">DocToAudio — Woven Model Edition</span>
+                                        </div>
+                                        <div class="product-screenshot-body" style="font-size:0.68rem;">
+                                            ┌─────────────────────────────────┐<br>
+                                            │  📄 <strong>DocToAudio</strong>                   │<br>
+                                            │  Convert → Audiobook             │<br>
+                                            │                                   │<br>
+                                            │  [📁 Drop PDF, DOCX, TXT, RTF]   │<br>
+                                            │  ─────────────────────────────   │<br>
+                                            │  Voice:   <span style="color:#22d3ee;">Microsoft David</span>     │<br>
+                                            │  Speed:   ████████░░ 1.5x        │<br>
+                                            │  Pitch:   ██████░░░░ 1.0x        │<br>
+                                            │  Format:  <span style="color:#22d3ee;">MP3</span> · 192 kbps       │<br>
+                                            │                                   │<br>
+                                            │  [▶ <strong>Preview</strong>]  [<span style="color:#22d3ee;">+ Add to Queue</span>]│<br>
+                                            └─────────────────────────────────┘<br>
+                                            <br>
+                                            ⏳ <strong>Queue:</strong> 2 pending · 1 converting
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-body">
+                                    <div class="product-tag"><span>✦</span> Desktop App</div>
+                                    <h3>DocToAudio — Woven Model Edition</h3>
+                                    <p class="product-subtitle">Convert documents into professional-quality audiobooks with a polished desktop application.</p>
+                                    <p>
+                                        A professional Windows application that turns PDFs, DOCX, TXT, and RTF files into audiobooks
+                                        using Windows TTS voices. Features multiple voices, speed and pitch control, a background
+                                        conversion queue, and a built-in audiobook library with search and favorites.
+                                    </p>
+                                    <div class="product-features">
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> PDF, DOCX, TXT, RTF import</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Multiple TTS voices</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Speed 0.5x–3.0x, pitch control</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Export to MP3, WAV, OGG</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Background queue with progress</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Built-in audiobook library</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> 14-day free trial</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Dark & light themes</div>
+                                    </div>
+                                    <div class="product-tech-tags">
+                                        <span class="product-tech-tag">PyQt6</span>
+                                        <span class="product-tech-tag">Python</span>
+                                        <span class="product-tech-tag">Windows</span>
+                                        <span class="product-tech-tag">TTS</span>
+                                        <span class="product-tech-tag">PyInstaller</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <a href="#contact" class="product-btn product-btn-primary">Download Setup</a>
+                                        <a href="#contact" class="product-btn product-btn-secondary">Portable EXE</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3: Stratum AI Trading Strategy Analyzer -->
+                        <div class="carousel-slide">
+                            <div class="product-card">
+                                <div class="product-visual">
+                                    <div class="product-screenshot">
+                                        <div class="product-screenshot-header">
+                                            <span class="product-screenshot-dot red"></span>
+                                            <span class="product-screenshot-dot yellow"></span>
+                                            <span class="product-screenshot-dot green"></span>
+                                            <span class="product-screenshot-title">Stratum — AI Trading Strategy Analyzer</span>
+                                        </div>
+                                        <img src="assets/stratum_backtest.png" alt="Stratum backtest tab with run configuration and results table" style="width:100%; border-radius: var(--radius-sm); display: block;">
+                                    </div>
+                                </div>
+                                <div class="product-body">
+                                    <div class="product-tag"><span>✦</span> Desktop App</div>
+                                    <h3>Stratum — AI Trading Strategy Analyzer</h3>
+                                    <p class="product-subtitle">Backtest, analyze, and optimize trading strategies with AI-powered insights.</p>
+                                    <p>
+                                        A professional Windows desktop application that replays years of historical market data
+                                        using an <strong>RSI + SMA</strong> mean-reversion strategy. Simulates trades bar-by-bar,
+                                        generates AI-powered symbol ratings (0-100), runs parameter optimization across 625
+                                        combinations, and exports professional reports in PDF, Excel, CSV, and JSON.
+                                    </p>
+                                    <div class="product-features">
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Historical backtesting engine</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> AI-powered symbol ratings 0-100</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Grid search parameter optimization</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Multi-symbol comparison</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Watchlist management</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> PDF / Excel / CSV / JSON export</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> Per-symbol config overrides</div>
+                                        <div class="product-feature-item"><span class="product-feature-icon">◆</span> 24-hour free trial available</div>
+                                    </div>
+                                    <div class="product-tech-tags">
+                                        <span class="product-tech-tag">PyQt6</span>
+                                        <span class="product-tech-tag">Python</span>
+                                        <span class="product-tech-tag">Windows</span>
+                                        <span class="product-tech-tag">Yahoo Finance</span>
+                                        <span class="product-tech-tag">PyInstaller</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <a href="stratum/" class="product-btn product-btn-primary">📖 Read Documentation</a>
+                                        <a href="#contact" class="product-btn product-btn-secondary">Get License</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <button class="carousel-arrow carousel-arrow-right" id="carousel-next" aria-label="Next product">▶</button>
+            </div>
+
+            <div class="carousel-indicators" id="carousel-indicators">
+                <button class="carousel-dot active" data-index="0" aria-label="Go to slide 1"></button>
+                <button class="carousel-dot" data-index="1" aria-label="Go to slide 2"></button>
+                <button class="carousel-dot" data-index="2" aria-label="Go to slide 3"></button>
             </div>
         </div>
     </section>
@@ -1635,7 +2131,13 @@
                     </div>
                 </div>
                 <div class="contact-form-wrapper fade-in fade-in-delay-2">
-                    <form id="contact-form" novalidate>
+                    <form id="contact-form" action="https://formsubmit.co/sales@wovenmodel.com" method="POST" novalidate>
+                        <!-- Honeypot to prevent spam -->
+                        <input type="text" name="_honey" style="display:none">
+                        <!-- Disable captcha -->
+                        <input type="hidden" name="_captcha" value="false">
+                        <!-- Redirect back after submit -->
+                        <input type="hidden" name="_next" value="https://wovenmodel.com/#contact">
                         <div class="form-grid">
                             <div class="form-group">
                                 <label for="name">Name <span aria-hidden="true">*</span></label>
@@ -1702,11 +2204,17 @@
                     <a href="mailto:jude@wovenmodel.com" aria-label="Email Jude Yearwood" title="Email">✉️</a>
                 </div>
             </div>
+            <div class="contact-details" style="margin-top: 1.5rem;">
+                <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-primary" target="_blank" rel="noopener noreferrer" style="width:100%; justify-content:center; padding:0.9rem; font-size:1rem;">
+                    📅 Book a Meeting
+                </a>
+            </div>
             <div class="footer-links">
                 <h4>Navigation</h4>
                 <ul>
                     <li><a href="#about">About</a></li>
                     <li><a href="#services">Services</a></li>
+                    <li><a href="#products">Products</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
@@ -1811,6 +2319,12 @@
         fadeElements.forEach(el => observer.observe(el));
 
         /* ============================================
+           BOOKING CONFIGURATION
+           Centralized URL — update here to change all booking links.
+           ============================================ */
+        const GOOGLE_BOOKING_URL = 'https://calendar.app.google/VcNdH476r22az1kj7';
+
+        /* ============================================
            CONTACT FORM VALIDATION
            ============================================ */
         const form = document.getElementById('contact-form');
@@ -1861,16 +2375,34 @@
             }
 
             if (valid) {
-                // Simulate form submission
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Sending...';
 
-                setTimeout(() => {
-                    form.style.display = 'none';
-                    formSuccess.classList.add('visible');
-                    // Scroll to success message
-                    formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 1000);
+                // Collect form data
+                const formData = new FormData(form);
+
+                // Send to FormSubmit.co — forwards to sales@wovenmodel.com
+                fetch('https://formsubmit.co/ajax/sales@wovenmodel.com', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        form.style.display = 'none';
+                        formSuccess.classList.add('visible');
+                        formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        alert('There was an error sending your message. Please email us directly at sales@wovenmodel.com.');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Request Consultation';
+                    }
+                })
+                .catch(() => {
+                    alert('There was an error sending your message. Please email us directly at sales@wovenmodel.com.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Request Consultation';
+                });
             }
         });
 
@@ -1890,6 +2422,52 @@
                 navToggle.focus();
             }
         });
+
+        /* ============================================
+           PRODUCT CAROUSEL
+           ============================================ */
+        (function() {
+            const track = document.getElementById('carousel-track');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const dots = document.querySelectorAll('.carousel-dot');
+            if (!track || !prevBtn || !nextBtn || !dots.length) return;
+
+            const slides = track.querySelectorAll('.carousel-slide');
+            let current = 0;
+            const total = slides.length;
+
+            function goTo(index) {
+                if (index < 0) index = total - 1;
+                if (index >= total) index = 0;
+                current = index;
+                track.style.transform = 'translateX(-' + (current * 100) + '%)';
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === current);
+                });
+            }
+
+            prevBtn.addEventListener('click', function() { goTo(current - 1); });
+            nextBtn.addEventListener('click', function() { goTo(current + 1); });
+
+            dots.forEach(function(dot) {
+                dot.addEventListener('click', function() {
+                    goTo(parseInt(this.getAttribute('data-index')));
+                });
+            });
+
+            // Keyboard navigation within carousel
+            const carousel = document.querySelector('.products-carousel');
+            if (carousel) {
+                carousel.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+                    if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+                });
+                carousel.setAttribute('tabindex', '0');
+                carousel.setAttribute('role', 'region');
+                carousel.setAttribute('aria-label', 'Product carousel');
+            }
+        })();
     </script>
 </body>
 </html>
