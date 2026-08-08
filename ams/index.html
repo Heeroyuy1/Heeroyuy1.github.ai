@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Woven Model AMS — Asset Management System. Track, audit, and manage physical assets with barcode/QR, check-in/check-out, reports, and license-based editions.">
+    <meta name="keywords" content="asset management, inventory tracking, barcode, QR code, check-in check-out, asset tracking, Woven Model">
+    <meta name="author" content="Jude Yearwood">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Woven Model AMS — Asset Management System | Woven Model">
+    <meta property="og:description" content="Enterprise asset tracking desktop application with barcode/QR scanning, Azure device import, mobile companion app, check-in/check-out, audit trails, and license-based editions.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wovenmodel.com/ams">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Woven Model AMS — Asset Management System | Woven Model</title>
+
+    <style>
+        :root {
+            --color-navy-950: #0a0f1e;
+            --color-navy-900: #0d1428;
+            --color-navy-800: #111b36;
+            --color-navy-700: #162244;
+            --color-navy-600: #1c2d56;
+            --color-navy-500: #243a6b;
+            --color-cyan-400: #22d3ee;
+            --color-cyan-500: #06b6d4;
+            --color-cyan-600: #0891b2;
+            --color-cyan-700: #0e7490;
+            --color-white: #ffffff;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            --color-green-400: #34d399;
+            --color-green-500: #10b981;
+            --color-red-400: #f87171;
+            --color-amber-400: #fbbf24;
+            --glass-bg: rgba(17, 27, 54, 0.6);
+            --glass-border: rgba(34, 211, 238, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glass-blur: blur(16px);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --transition-fast: 150ms ease;
+            --transition-normal: 300ms ease;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --max-width: 1200px;
+            --nav-height: 72px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-navy-950);
+            color: var(--color-gray-200);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: var(--color-cyan-400); text-decoration: none; transition: color var(--transition-fast); }
+        a:hover { color: var(--color-cyan-500); }
+        h1, h2, h3, h4, h5, h6 { line-height: 1.25; color: var(--color-white); }
+        h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; }
+        h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; }
+        h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 600; }
+        p { margin-bottom: 1rem; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--color-navy-700);
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-white);
+            border-bottom: 2px solid var(--color-cyan-600);
+        }
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--color-gray-300);
+        }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 var(--glass-border);
+        }
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-white);
+            letter-spacing: -0.02em;
+        }
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-cyan-400), var(--color-cyan-600));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--color-navy-950);
+            flex-shrink: 0;
+        }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--color-gray-300);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+        .nav-links a:hover { color: var(--color-white); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950) !important;
+            padding: 0.55rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600 !important;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35); }
+
+        .page-header {
+            padding: calc(var(--nav-height) + 3rem) 1.5rem 3rem;
+            background: linear-gradient(180deg, var(--color-navy-900) 0%, var(--color-navy-950) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.06), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .page-header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .page-breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-gray-500);
+            margin-bottom: 1.5rem;
+        }
+        .page-breadcrumb a { color: var(--color-gray-400); }
+        .page-breadcrumb span { color: var(--color-gray-500); }
+        .page-header h1 { margin-bottom: 0.75rem; }
+        .page-header .subtitle {
+            font-size: 1.1rem;
+            color: var(--color-gray-400);
+            max-width: 650px;
+        }
+        .page-header .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-top: 1.5rem;
+        }
+        .page-header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-cyan-400);
+        }
+        .page-header .badge.green { color: var(--color-green-400); background: rgba(16, 185, 129, 0.1); }
+        .page-header .badge.amber { color: var(--color-amber-400); background: rgba(251, 191, 36, 0.1); }
+
+        .section {
+            padding: 4rem 1.5rem;
+            position: relative;
+        }
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-header { margin-bottom: 2.5rem; }
+        .section-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-cyan-400);
+            margin-bottom: 0.5rem;
+        }
+        .section-title { margin-bottom: 0.5rem; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.2rem;
+        }
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            transition: all var(--transition-normal);
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 { margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .feature-card p { color: var(--color-gray-400); font-size: 0.88rem; margin: 0; }
+
+        /* Pricing cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .pricing-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+        .pricing-card.recommended {
+            border-color: var(--color-cyan-600);
+            box-shadow: 0 0 0 1px var(--color-cyan-600), 0 12px 40px rgba(0,0,0,0.5);
+        }
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950);
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .pricing-card h3 { font-size: 1.2rem; margin-bottom: 0.3rem; }
+        .pricing-card .price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-white);
+            margin: 1rem 0 0.3rem;
+        }
+        .pricing-card .price small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--color-gray-500);
+        }
+        .pricing-card .period {
+            color: var(--color-gray-500);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        .pricing-card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .pricing-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.88rem;
+            color: var(--color-gray-300);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .pricing-card li::before {
+            content: '✓';
+            color: var(--color-green-400);
+            font-weight: 700;
+        }
+        .pricing-card li.no::before {
+            content: '✗';
+            color: var(--color-red-400);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-navy-800), var(--color-navy-700));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .cta-section h2 { margin-bottom: 0.75rem; }
+        .cta-section p { color: var(--color-gray-400); max-width: 500px; margin: 0 auto 1.5rem; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            font-family: var(--font-sans);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(6, 182, 212, 0.4);
+            color: var(--color-navy-950);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-white);
+            border: 1px solid var(--color-gray-600);
+        }
+        .btn-secondary:hover { border-color: var(--color-cyan-400); color: var(--color-cyan-400); transform: translateY(-2px); }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+        .footer {
+            background: var(--color-navy-900);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 1.5rem 1.5rem;
+        }
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            text-align: center;
+            color: var(--color-gray-600);
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--color-gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: color var(--transition-fast);
+        }
+        .back-link:hover { color: var(--color-cyan-400); }
+        .back-link::before { content: '←'; }
+
+        @media (max-width: 768px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.8rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            .cta-section { padding: 2rem 1.2rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="https://www.wovenmodel.com/" class="nav-logo" aria-label="Woven Model Home">
+                <div class="nav-logo-icon">WM</div>
+                Woven Model
+            </a>
+            <div class="nav-links">
+                <a href="https://www.wovenmodel.com/#products">Products</a>
+                <a href="https://www.wovenmodel.com/#services">Services</a>
+                <a href="https://www.wovenmodel.com/#about">About</a>
+                <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="nav-cta" target="_blank" rel="noopener noreferrer">Book a Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-breadcrumb">
+                <a href="https://www.wovenmodel.com/">Home</a>
+                <span>/</span>
+                <a href="https://www.wovenmodel.com/#products">Products</a>
+                <span>/</span>
+                <span>Asset Management System</span>
+            </div>
+            <a href="https://www.wovenmodel.com/#products" class="back-link">Back to Products</a>
+            <h1>AMS — Asset Management System</h1>
+            <p class="subtitle">
+                A professional Windows desktop application for tracking physical assets across your organization.
+                Generate barcodes, scan QR codes from your phone, import managed devices from Microsoft Entra ID,
+                manage check-in / check-out workflows, run reports, and maintain a full audit trail — all from one app.
+            </p>
+            <div class="badge-row">
+                <span class="badge">📦 Asset Tracking</span>
+                <span class="badge">📱 Barcode & QR</span>
+                <span class="badge">🔁 Check-In/Out</span>
+                <span class="badge green">📊 Reports</span>
+                <span class="badge amber">🔑 Licensed Editions</span>
+                <span class="badge">☁️ Azure Import</span>
+                <span class="badge green">📲 Mobile Scanner</span>
+                <span class="badge">📄 Excel / CSV / PDF Export</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="section" style="padding-top: 2rem;">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-label">Overview</span>
+                <h2 class="section-title">Know Exactly Where Every Asset Is</h2>
+                <p style="color: var(--color-gray-400); max-width: 700px;">
+                    AMS replaces spreadsheets and sticky notes with a searchable database of your physical assets.
+                    Track laptops, tools, equipment, furniture, vehicles — anything with a serial number or tag.
+                    Generate barcodes for labeling, scan QR codes on mobile, and maintain
+                    a complete history of who had what and when.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">📦</div>
+                    <h3>Full Asset CRUD</h3>
+                    <p>Create, update, and manage assets with custom fields, categories, purchase info, warranty dates, and attached files. Bulk import from Excel or CSV.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📱</div>
+                    <h3>Barcode & QR Codes</h3>
+                    <p>Generate printable barcodes and QR codes for every asset. Scan with any phone camera for instant lookup. Label everything in your inventory.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔁</div>
+                    <h3>Check-In / Check-Out</h3>
+                    <p>Track who has which asset right now. Log check-outs to employees with due dates, notes, and status tracking. Never lose an asset again.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">👥</div>
+                    <h3>People & Places</h3>
+                    <p>Manage employees, departments, and locations. Assign assets to people and places with full history. Code-based employee and department lookup.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📊</div>
+                    <h3>Reports & Dashboards</h3>
+                    <p>KPI cards, asset status charts, low-stock alerts, and recent activity. Export inventory reports, warranty tracking, and assignment summaries to Excel, CSV, or PDF.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🕐</div>
+                    <h3>Complete Audit Trail</h3>
+                    <p>Every asset has a full history log. Every action is recorded in audit logs. Know exactly who changed what and when — compliance-ready out of the box.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">💾</div>
+                    <h3>Auto Backup & Restore</h3>
+                    <p>Scheduled automatic backups (default: every 24 hours, max 10 retained). Manual backup and restore from the Settings panel. SQLite WAL mode — safe for forced shutdowns.</p>
+            </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔐</div>
+                    <h3>Role-Based Access</h3>
+                    <p>Six roles: Admin, Manager, User, Technician, Auditor, Read Only. Admin-only user management in Settings — create users, assign roles, reset passwords, and control access with scrypt-hashed passwords and session tokens.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📥</div>
+                    <h3>Import from Anywhere</h3>
+                    <p>Excel (.xlsx/.xls) and CSV import with column mapping preview. Map your existing spreadsheet columns to AMS fields in a visual mapper before importing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">☁️</div>
+                    <h3>Azure Device Import</h3>
+                    <p>Import managed devices directly from Microsoft Entra ID (Azure AD). Automatic lifecycle classification — active, inactive, stale, investigation required, or candidate removal. Encrypted credentials at rest with AES-256-GCM.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📲</div>
+                    <h3>Mobile Barcode Scanner</h3>
+                    <p>Companion mobile app pairs with AMS over your local network. Scan barcodes and QR codes with your phone camera for instant asset lookup — no dedicated scanner hardware needed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDITIONS / PRICING -->
+    <div class="section">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-label">Editions</span>
+                <h2 class="section-title">Choose Your License</h2>
+                <p style="color: var(--color-gray-400); max-width: 700px;">
+                    Three editions to fit your organization's size. License keys activate features instantly via the app's License panel.
+                    All data stays local — no cloud dependency.
+                </p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Community</h3>
+                    <div class="price">Free</div>
+                    <div class="period">Forever</div>
+                    <ul>
+                        <li>Up to 10 assets</li>
+                        <li>Basic asset tracking</li>
+                        <li>Employee & department management</li>
+                        <li>Location management</li>
+                        <li>Import (Excel/CSV)</li>
+                        <li class="no">Attachments</li>
+                        <li class="no">Barcode & QR codes</li>
+                        <li class="no">Mobile barcode scanner</li>
+                        <li class="no">Check-in / Check-out</li>
+                        <li class="no">Azure device import</li>
+                        <li class="no">Audit history</li>
+                        <li class="no">Advanced reports</li>
+                        <li class="no">Auto backups</li>
+                        <li class="no">Unlimited users</li>
+                    </ul>
+                    <a href="#download" class="btn btn-secondary" style="width:100%; justify-content:center;">Download Free</a>
+                </div>
+
+                <div class="pricing-card recommended">
+                    <div class="pricing-badge">Recommended</div>
+                    <h3>Professional</h3>
+                    <div class="price"><small>$</small>199<small>/yr</small></div>
+                    <div class="period">Per seat</div>
+                    <ul>
+                        <li>Unlimited assets</li>
+                        <li>Full asset tracking</li>
+                        <li>Employee & department management</li>
+                        <li>Location management</li>
+                        <li>Import (Excel/CSV)</li>
+                        <li>File attachments</li>
+                        <li>Barcode & QR codes</li>
+                        <li>Mobile barcode scanner</li>
+                        <li>Check-in / Check-out</li>
+                        <li>Audit history</li>
+                        <li>Standard reports</li>
+                        <li>Auto backups</li>
+                        <li>Up to 10 users</li>
+                        <li class="no">Azure device import</li>
+                    </ul>
+                    <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-primary" style="width:100%; justify-content:center;" target="_blank" rel="noopener noreferrer">Get Professional</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price"><small>$</small>499<small>/yr</small></div>
+                    <div class="period">Unlimited seats</div>
+                    <ul>
+                        <li>Unlimited assets</li>
+                        <li>Full asset tracking</li>
+                        <li>Employee & department management</li>
+                        <li>Location management</li>
+                        <li>Import (Excel/CSV)</li>
+                        <li>File attachments</li>
+                        <li>Barcode & QR codes</li>
+                        <li>Mobile barcode scanner</li>
+                        <li>Check-in / Check-out</li>
+                        <li>Azure device import</li>
+                        <li>Full audit history</li>
+                        <li>Advanced reports (PDF/Excel/CSV)</li>
+                        <li>Auto backups</li>
+                        <li>Unlimited users</li>
+                        <li>Priority support</li>
+                        <li>Custom feature requests</li>
+                    </ul>
+                    <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-primary" style="width:100%; justify-content:center;" target="_blank" rel="noopener noreferrer">Get Enterprise</a>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Edition Comparison</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th style="text-align:center;">Community</th>
+                            <th style="text-align:center;">Professional</th>
+                            <th style="text-align:center;">Enterprise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Max Assets</td><td style="text-align:center;">10</td><td style="text-align:center;">Unlimited</td><td style="text-align:center;">Unlimited</td></tr>
+                        <tr><td>Max Users</td><td style="text-align:center;">1</td><td style="text-align:center;">10</td><td style="text-align:center;">Unlimited</td></tr>
+                        <tr><td>Barcode & QR</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Mobile Scanner</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Azure Import</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Check-In/Out</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Attachments</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Audit History</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Reports</td><td style="text-align:center;">Basic</td><td style="text-align:center;">Standard</td><td style="text-align:center;">Advanced (PDF)</td></tr>
+                        <tr><td>Auto Backups</td><td style="text-align:center;"><span style="color:var(--color-red-400);">✗</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td><td style="text-align:center;"><span style="color:var(--color-green-400);">✓</span></td></tr>
+                        <tr><td>Support</td><td style="text-align:center;">Community</td><td style="text-align:center;">Email</td><td style="text-align:center;">Priority</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TECH SPECS -->
+    <div class="section">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-label">Technical</span>
+                <h2 class="section-title">Built for Reliability</h2>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">🖥</div>
+                    <h3>Desktop-First</h3>
+                    <p>Windows native application built on Electron. No browser, no cloud dependency. Your data stays on your machine.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🗄</div>
+                    <h3>SQLite Database</h3>
+                    <p>Fast, reliable, zero-configuration database. WAL mode for concurrent reads. 64MB memory cache. 12 tables with full foreign key integrity.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">🔒</div>
+                    <h3>Secure by Default</h3>
+                    <p>Context isolation enabled. No Node.js access from the renderer. Scrypt-hashed passwords. Session tokens with configurable timeout. All IPC calls validated.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">📝</div>
+                    <h3>Audit Logging</h3>
+                    <p>Every create, update, delete, login, and export is logged with user ID, timestamp, and details. JSON structured logging with rotation.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GETTING STARTED -->
+    <div class="section">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-label">Getting Started</span>
+                <h2 class="section-title">Quick Setup</h2>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-card-icon">1</div>
+                    <h3>Download & Install</h3>
+                    <p>Download the installer or portable EXE. Run the NSIS installer or extract the zip. Launch Woven Model AMS from your desktop or Start Menu.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">2</div>
+                    <h3>Create Admin Account</h3>
+                    <p>On first launch, the Setup page appears. Create your admin account with username and password. This will be the system administrator.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">3</div>
+                    <h3>Set Up Your Organization</h3>
+                    <p>Add departments, locations, and employees. Or import them in bulk from a CSV or Excel spreadsheet using the Import tool.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-card-icon">4</div>
+                    <h3>Start Tracking Assets</h3>
+                    <p>Add your first assets — manually or import from a spreadsheet. Generate barcodes, assign to employees, and start the check-in/check-out workflow.</p>
+                </div>
+            </div>
+
+            <div class="cta-section" id="download">
+                <h2>Ready to Organize Your Assets?</h2>
+                <p>Download the Community Edition for free — up to 10 assets, no license key required. Upgrade to Professional or Enterprise when you're ready to scale.</p>
+                <div class="btn-row">
+                    <a href="https://drive.google.com/file/d/1U9v290Rl54owcKxcpnMnNYWgs0h0HxBV/view?usp=sharing" class="btn btn-primary" target="_blank" rel="noopener noreferrer">⬇ Download Now</a>
+                    <a href="docs/user-guide.html" class="btn btn-secondary">📖 User Guide</a>
+                    <a href="docs/troubleshooting.html" class="btn btn-secondary">🔧 Troubleshooting</a>
+                    <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-primary" target="_blank" rel="noopener noreferrer">📅 Book a Demo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-inner">
+            <p>&copy; 2026 Woven Model. All rights reserved.</p>
+            <p style="margin-top: 0.5rem;">Asset Management System — Track everything. Know anything.</p>
+        </div>
+    </div>
+</body>
+</html>

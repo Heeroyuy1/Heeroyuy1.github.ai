@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMS User Guide — Woven Model</title>
+    <style>
+        :root {
+            --color-navy-950: #0a0f1e; --color-navy-900: #0d1428; --color-navy-800: #111b36; --color-navy-700: #162244;
+            --color-cyan-400: #22d3ee; --color-cyan-500: #06b6d4;
+            --color-white: #ffffff; --color-gray-300: #d1d5db; --color-gray-400: #9ca3af; --color-gray-500: #6b7280;
+            --glass-bg: rgba(17, 27, 54, 0.6); --glass-border: rgba(34, 211, 238, 0.15);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --max-width: 1100px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-sans); background-color: var(--color-navy-950); color: var(--color-gray-300); line-height: 1.7; }
+        a { color: var(--color-cyan-400); text-decoration: none; }
+        a:hover { color: var(--color-cyan-500); }
+        h1, h2, h3, h4 { color: var(--color-white); }
+        h1 { font-size: 2.2rem; font-weight: 800; }
+        h2 { font-size: 1.6rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; }
+        h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin: 0 0 1rem 1.5rem; }
+        li { margin-bottom: 0.4rem; }
+        code { font-family: var(--font-mono); background: rgba(255,255,255,0.06); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
+        pre { background: var(--color-navy-800); border: 1px solid var(--glass-border); border-radius: 8px; padding: 1rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6; margin-bottom: 1rem; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        th { background: var(--color-navy-700); padding: 0.7rem 1rem; text-align: left; font-weight: 600; color: var(--color-white); border-bottom: 2px solid var(--color-cyan-500); }
+        td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--glass-border); }
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        .header { padding: 3rem 1.5rem 2rem; background: linear-gradient(180deg, var(--color-navy-900), var(--color-navy-950)); border-bottom: 1px solid var(--glass-border); }
+        .header-inner { max-width: var(--max-width); margin: 0 auto; }
+        .note { background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(34, 211, 238, 0.2); border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+        .warning { background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+        .tip { background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+        .toc { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; }
+        .toc ul { list-style: none; margin: 0.5rem 0 0; }
+        .toc li { padding: 0.3rem 0; }
+        @media (max-width: 768px) { .container { padding: 1rem; } }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="header-inner">
+        <p style="color:var(--color-gray-500); font-size:0.85rem;"><a href="../index.html">← AMS Home</a></p>
+        <h1>📖 AMS User Guide</h1>
+        <p style="color:var(--color-gray-400);">Everything you need to know to get started and master the Woven Model Asset Management System.</p>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="toc">
+    <h3>Table of Contents</h3>
+    <ul>
+        <li><a href="#install">1. Installation</a></li>
+        <li><a href="#first-run">2. First-Run Setup</a></li>
+        <li><a href="#navigation">3. Navigation & Layout</a></li>
+        <li><a href="#assets">4. Managing Assets</a></li>
+        <li><a href="#employees">5. Employees & Departments</a></li>
+        <li><a href="#locations">6. Locations</a></li>
+        <li><a href="#import">7. Importing Data</a></li>
+        <li><a href="#barcodes">8. Barcodes & QR Codes</a></li>
+        <li><a href="#checkinout">9. Check-In / Check-Out</a></li>
+        <li><a href="#reports">10. Reports & Dashboard</a></li>
+        <li><a href="#history">11. History & Audit Trail</a></li>
+        <li><a href="#settings">12. Settings & Backups</a></li>
+        <li><a href="#license">13. License Management</a></li>
+        <li><a href="#users">14. User Management</a></li>
+    </ul>
+</div>
+
+<!-- INSTALL -->
+<h2 id="install">1. Installation</h2>
+
+<h3>System Requirements</h3>
+<table>
+    <tr><td>Operating System</td><td>Windows 10 / 11 (64-bit)</td></tr>
+    <tr><td>RAM</td><td>4 GB minimum</td></tr>
+    <tr><td>Disk Space</td><td>500 MB free</td></tr>
+</table>
+<div class="note"><strong>Note:</strong> The installer is fully self-contained. It includes the Node.js runtime and the mobile scanner server — no separate Node.js or other software needs to be installed.</div>
+
+<h3>Download</h3>
+<p>Get the latest release from the official download page:</p>
+<ul>
+    <li><a href="https://drive.google.com/file/d/1U9v290Rl54owcKxcpnMnNYWgs0h0HxBV/view?usp=sharing" target="_blank" rel="noopener noreferrer">⬇ Download Woven Model AMS</a> (Google Drive)</li>
+</ul>
+
+<h3>Install via NSIS Installer</h3>
+<ol>
+    <li>Download <code>Woven Model AMS Setup.exe</code> from the link above</li>
+    <li>Run the installer and follow the wizard</li>
+    <li>Choose installation directory (default: <code>%LOCALAPPDATA%\Programs\woven-model-ams</code>)</li>
+    <li>Check "Create desktop shortcut" and "Create Start Menu shortcut"</li>
+    <li>Launch AMS from the desktop icon or Start Menu</li>
+</ol>
+
+<h3>Portable (No Install)</h3>
+<ol>
+    <li>Download the portable ZIP from the link above</li>
+    <li>Extract to any folder (e.g., <code>C:\AMS</code> or a USB drive)</li>
+    <li>Run <code>Woven Model AMS.exe</code></li>
+</ol>
+
+<div class="note"><strong>Note:</strong> The portable version stores data in the same folder. The installed version stores data in <code>%APPDATA%\woven-model-ams</code>.</div>
+
+<!-- FIRST RUN -->
+<h2 id="first-run">2. First-Run Setup</h2>
+<ol>
+    <li>On first launch, you'll see the <strong>Setup</strong> page.</li>
+    <li>Enter your desired <strong>Username</strong> and <strong>Password</strong> (minimum 8 characters).</li>
+    <li>Click <strong>"Create Admin Account"</strong>.</li>
+    <li>You'll be redirected to the <strong>Login</strong> page.</li>
+    <li>Enter your credentials and click <strong>"Sign In"</strong>.</li>
+</ol>
+
+<div class="tip"><strong>Tip:</strong> This creates the system administrator account. You can add more users later via Settings → Users.</div>
+
+<h3>If the Setup Page Doesn't Appear</h3>
+<p>If you see a login page but no admin account exists, you can bootstrap one:</p>
+<pre>node scripts/create-test-user.cjs</pre>
+<p>This creates an admin user: <code>admin</code> / <code>admin123</code>.</p>
+
+<!-- NAVIGATION -->
+<h2 id="navigation">3. Navigation & Layout</h2>
+<p>The app has a sidebar on the left with navigation links. The main content area takes up the rest of the window.</p>
+
+<h3>Sidebar Menu</h3>
+<table>
+    <tr><th>Page</th><th>Icon</th><th>Description</th></tr>
+    <tr><td>Dashboard</td><td>📊</td><td>KPI cards, charts, recent activity</td></tr>
+    <tr><td>Assets</td><td>📦</td><td>Asset list, search, CRUD</td></tr>
+    <tr><td>Employees</td><td>👥</td><td>Employee management</td></tr>
+    <tr><td>Departments</td><td>🏢</td><td>Department management</td></tr>
+    <tr><td>Locations</td><td>📍</td><td>Location management</td></tr>
+    <tr><td>Import</td><td>📥</td><td>Import from Excel/CSV</td></tr>
+    <tr><td>Reports</td><td>📄</td><td>Generate and export reports</td></tr>
+    <tr><td>History</td><td>🕐</td><td>Asset history & audit logs</td></tr>
+    <tr><td>Settings</td><td>⚙</td><td>Backup, users, system config</td></tr>
+    <tr><td>License</td><td>🛡</td><td>License key management</td></tr>
+</table>
+
+<!-- ASSETS -->
+<h2 id="assets">4. Managing Assets</h2>
+
+<h3>Viewing Assets</h3>
+<p>The Assets page shows a table of all assets. You can:</p>
+<ul>
+    <li><strong>Search:</strong> by name, asset tag, serial number, or category</li>
+    <li><strong>Filter:</strong> by status (Available, Assigned, Maintenance, Retired, Lost, Decommissioned)</li>
+    <li><strong>Sort:</strong> click any column header to sort ascending/descending</li>
+    <li><strong>Paginate:</strong> use the page controls at the bottom</li>
+</ul>
+
+<h3>Creating an Asset</h3>
+<ol>
+    <li>Click <strong>"+ Add Asset"</strong></li>
+    <li>Fill in the form. Required fields: <strong>Name</strong> and <strong>Category</strong>.</li>
+    <li>Optional: Asset Tag, Serial Number, Purchase Date, Warranty Expiry, Purchase Price, Condition, Notes</li>
+    <li>Click <strong>"Create Asset"</strong></li>
+</ol>
+
+<h3>Editing an Asset</h3>
+<ol>
+    <li>Click on an asset row in the table, or click the edit icon</li>
+    <li>Modify any fields</li>
+    <li>Click <strong>"Update Asset"</strong></li>
+</ol>
+
+<h3>Deleting an Asset</h3>
+<p>Click the trash icon on an asset row. Confirm the deletion. <strong>This action is permanent</strong> and removes the asset and its history.</p>
+
+<div class="warning"><strong>Warning:</strong> Deleted assets cannot be recovered except through a backup restore.</div>
+
+<h3>Asset Detail Page</h3>
+<p>Clicking an asset opens its detail page, which shows:</p>
+<ul>
+    <li>All asset fields (name, tag, serial, status, etc.)</li>
+    <li><strong>Assignment:</strong> Current assigned employee and location</li>
+    <li><strong>Attachments:</strong> Uploaded files (Professional/Enterprise only)</li>
+    <li><strong>Check-Out History:</strong> Record of who had this asset and when</li>
+    <li><strong>Full History:</strong> Every change made to this asset since creation</li>
+</ul>
+
+<!-- EMPLOYEES -->
+<h2 id="employees">5. Employees & Departments</h2>
+
+<h3>Employees</h3>
+<p>The Employees page lists all people in your organization who can be assigned assets.</p>
+<ul>
+    <li><strong>Add:</strong> Click "+ Add Employee" — fill in name, email, employee code, department</li>
+    <li><strong>Edit:</strong> Click an employee row to modify</li>
+    <li><strong>Search:</strong> by name, email, or employee code</li>
+</ul>
+
+<h3>Departments</h3>
+<p>Departments organize employees and track where assets are used.</p>
+<ul>
+    <li><strong>Add:</strong> "+ Add Department" — name and department code</li>
+    <li><strong>Edit:</strong> Click a department row</li>
+</ul>
+
+<!-- LOCATIONS -->
+<h2 id="locations">6. Locations</h2>
+<p>Locations represent physical places where assets are kept (offices, storage rooms, buildings).</p>
+<ul>
+    <li>Add locations with a name and optional code</li>
+    <li>Assign assets to locations when they're not checked out to an employee</li>
+    <li>Useful for tracking assets across multiple sites</li>
+</ul>
+
+<!-- IMPORT -->
+<h2 id="import">7. Importing Data</h2>
+<p>The Import page lets you bulk-load assets, employees, departments, or locations from spreadsheets.</p>
+
+<h3>Supported Formats</h3>
+<ul>
+    <li>Excel: <code>.xlsx</code>, <code>.xls</code></li>
+    <li>CSV: <code>.csv</code></li>
+</ul>
+
+<h3>Import Workflow</h3>
+<ol>
+    <li>Select <strong>Import Type</strong>: Assets, Employees, Departments, or Locations</li>
+    <li>Choose your file</li>
+    <li>The app reads the file and shows a <strong>column mapping preview</strong></li>
+    <li>Map your spreadsheet columns to AMS fields using the dropdowns</li>
+    <li>Review the preview rows</li>
+    <li>Click <strong>"Import"</strong></li>
+</ol>
+
+<div class="tip"><strong>Tip:</strong> Use the "Skip first row" checkbox if your spreadsheet has a header row. Most imports already detect headers automatically.</div>
+
+<!-- BARCODES -->
+<h2 id="barcodes">8. Barcodes & QR Codes</h2>
+<p>AMS generates barcode and QR code labels for any asset. Available in Professional and Enterprise editions.</p>
+
+<h3>Generating a Barcode/QR</h3>
+<ol>
+    <li>Navigate to an asset's detail page</li>
+    <li>Click <strong>"Generate Barcode"</strong> or <strong>"Generate QR Code"</strong></li>
+    <li>The code is generated from the asset's tag or ID</li>
+    <li><strong>Print</strong> the label and affix it to the physical asset</li>
+</ol>
+
+<h3>Scanning</h3>
+<p>Use any smartphone camera or barcode scanner app to scan the QR code. It will display the asset's ID/tag for quick lookup.</p>
+
+<!-- CHECK-IN/OUT -->
+<h2 id="checkinout">9. Check-In / Check-Out</h2>
+<p>Track which employee currently has which asset with the check-in/check-out system. Professional and Enterprise only.</p>
+
+<h3>Check-Out an Asset</h3>
+<ol>
+    <li>Go to the asset's detail page</li>
+    <li>Click <strong>"Check Out"</strong></li>
+    <li>Select the <strong>employee</strong> receiving the asset</li>
+    <li>Optionally set a <strong>due date</strong> and add <strong>notes</strong></li>
+    <li>Click "Confirm Check-Out"</li>
+</ol>
+
+<h3>Check-In an Asset</h3>
+<ol>
+    <li>Go to the asset's detail page (or find it via Assets list)</li>
+    <li>Click <strong>"Check In"</strong></li>
+    <li>Optionally add return notes or update the asset condition</li>
+    <li>Click "Confirm Check-In"</li>
+</ol>
+
+<h3>Viewing Check-Out History</h3>
+<p>Each asset's detail page shows its complete check-out history — who had it, when, and for how long.</p>
+
+<!-- REPORTS -->
+<h2 id="reports">10. Reports & Dashboard</h2>
+
+<h3>Dashboard</h3>
+<p>The Dashboard provides an at-a-glance overview:</p>
+<ul>
+    <li><strong>KPI Cards:</strong> Total Assets, Assigned, Available, Maintenance</li>
+    <li><strong>Status Chart:</strong> Pie/bar chart of asset statuses</li>
+    <li><strong>Category Breakdown:</strong> Assets by category</li>
+    <li><strong>Recent Activity:</strong> Latest changes, check-outs, and audits</li>
+</ul>
+
+<h3>Reports Page</h3>
+<p>Generate detailed reports and export them:</p>
+<ul>
+    <li><strong>Full Inventory:</strong> All assets with filters</li>
+    <li><strong>Assigned Assets:</strong> Currently checked-out assets with employee details</li>
+    <li><strong>Warranty Tracking:</strong> Assets with upcoming or expired warranties</li>
+    <li><strong>Audit Summary:</strong> Activity summary by date range</li>
+</ul>
+
+<h3>Export Formats</h3>
+<table>
+    <tr><th>Format</th><th>Available In</th></tr>
+    <tr><td>Excel (.xlsx)</td><td>All editions</td></tr>
+    <tr><td>CSV</td><td>All editions</td></tr>
+    <tr><td>PDF</td><td>Enterprise only</td></tr>
+</table>
+
+<!-- HISTORY -->
+<h2 id="history">11. History & Audit Trail</h2>
+
+<h3>Asset History</h3>
+<p>Every change to an asset is recorded:</p>
+<ul>
+    <li>Field changes (old value → new value)</li>
+    <li>Who made the change (username)</li>
+    <li>When the change was made (timestamp)</li>
+</ul>
+<p>View an asset's full history on its detail page under the "History" tab.</p>
+
+<h3>Audit Logs</h3>
+<p>The History page shows the global audit trail — every action in the system:</p>
+<ul>
+    <li>Logins and logouts</li>
+    <li>Asset creates, updates, deletes</li>
+    <li>Check-outs and check-ins</li>
+    <li>Imports and exports</li>
+    <li>Settings changes</li>
+</ul>
+
+<!-- SETTINGS -->
+<h2 id="settings">12. Settings & Backups</h2>
+
+<h3>Auto Backup</h3>
+<p>The app automatically backs up the database:</p>
+<ul>
+    <li><strong>Interval:</strong> Every 24 hours (configurable)</li>
+    <li><strong>Location:</strong> <code>%APPDATA%\woven-model-ams\Backups\</code></li>
+    <li><strong>Max retained:</strong> 10 backups (oldest auto-deleted)</li>
+</ul>
+
+<h3>Manual Backup</h3>
+<ol>
+    <li>Go to <strong>Settings</strong></li>
+    <li>In the Backup section, click <strong>"Create Backup"</strong></li>
+    <li>The backup file is saved to the Backups folder</li>
+</ol>
+
+<h3>Restore from Backup</h3>
+<ol>
+    <li>In Settings → Backup, select a backup from the list</li>
+    <li>Click <strong>"Restore"</strong></li>
+    <li>Confirm — this replaces your current database with the backup</li>
+</ol>
+<div class="warning"><strong>Warning:</strong> Restoring overwrites all current data. Create a manual backup first if you want to preserve it.</div>
+
+<h3>Session Timeout</h3>
+<p>Configure how long a user stays logged in before being automatically signed out. Default: 8 hours.</p>
+
+<!-- LICENSE -->
+<h2 id="license">13. License Management</h2>
+
+<h3>Viewing Your License</h3>
+<p>Go to the <strong>License</strong> page (shield icon in the sidebar). You'll see:</p>
+<ul>
+    <li><strong>Edition:</strong> Community, Professional, or Enterprise</li>
+    <li><strong>Status:</strong> Active, Expired, or Trial</li>
+    <li><strong>Expiry Date:</strong> When the license expires (if applicable)</li>
+    <li><strong>Feature Gates:</strong> Which features are enabled</li>
+</ul>
+
+<h3>Activating a License</h3>
+<ol>
+    <li>Purchase a license from the Woven Model portal</li>
+    <li>Copy your license key</li>
+    <li>Go to <strong>License</strong> page in AMS</li>
+    <li>Paste the key and click <strong>"Activate"</strong></li>
+    <li>The unlocked features take effect immediately — no restart required</li>
+</ol>
+
+<h3>Edition Comparison</h3>
+<table>
+    <tr><th>Feature</th><th>Community</th><th>Professional</th><th>Enterprise</th></tr>
+    <tr><td>Max Assets</td><td>10</td><td>Unlimited</td><td>Unlimited</td></tr>
+    <tr><td>Barcode/QR</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Check-In/Out</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Attachments</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Audit History</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>Auto Backups</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>PDF Export</td><td>❌</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Unlimited Users</td><td>❌</td><td>❌</td><td>✅</td></tr>
+</table>
+
+<!-- USERS -->
+<h2 id="users">14. User Management</h2>
+
+<h3>User Roles</h3>
+<table>
+    <tr><th>Role</th><th>Permissions</th></tr>
+    <tr><td><strong>Admin</strong></td><td>Full access — all CRUD, user management, settings, backups, license</td></tr>
+    <tr><td><strong>Manager</strong></td><td>Manage assets, check-in/out, reports, imports. Cannot manage users or settings.</td></tr>
+    <tr><td><strong>User</strong></td><td>View and search only. Cannot create/delete assets or modify settings.</td></tr>
+    <tr><td><strong>Technician</strong></td><td>Technician-level access (support/repair workflow).</td></tr>
+    <tr><td><strong>Auditor</strong></td><td>Audit / read access — ideal for compliance reviews.</td></tr>
+    <tr><td><strong>Read Only</strong></td><td>View-only access across the application.</td></tr>
+</table>
+
+<h3>Adding Users (Admin only)</h3>
+<ol>
+    <li>Go to <strong>Settings → Users</strong> (the panel is visible only to admins)</li>
+    <li>Click <strong>"+ Add User"</strong></li>
+    <li>Enter username, full name, an optional email, choose a role, and set a password (minimum 8 characters)</li>
+    <li>Click "Create User" — the new user can sign in immediately and their role applies at login</li>
+</ol>
+
+<div class="note"><strong>Note:</strong> The user list shows each account's role badge, email, last-login date, and active status. The account you are signed in with is marked "You".</div>
+
+<h3>User Limits by Edition</h3>
+<table>
+    <tr><th>Edition</th><th>User Limit</th></tr>
+    <tr><td>Community</td><td>1 user (the initial admin)</td></tr>
+    <tr><td>Professional</td><td>10 users</td></tr>
+    <tr><td>Enterprise</td><td>Unlimited</td></tr>
+</table>
+<p>When the limit is reached, adding another user returns: <em>"Maximum of N user(s) reached for this edition. Upgrade to add more users."</em></p>
+
+<h3>Managing Users</h3>
+<p>User management APIs are admin-only. Admins can update a user's role, full name, email, active state (enable/disable an account), and reset a password. Always maintain at least one active admin account.</p>
+
+<div class="warning"><strong>Warning:</strong> Disabling or removing the last admin user will lock you out of admin functions. Editing a user's role or password does not end that user's current session.</div>
+</div>
+
+</div>
+</body>
+</html>

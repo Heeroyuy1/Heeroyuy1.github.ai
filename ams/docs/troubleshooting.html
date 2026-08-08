@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMS Troubleshooting Guide — Woven Model</title>
+    <style>
+        :root {
+            --color-navy-950: #0a0f1e; --color-navy-900: #0d1428; --color-navy-800: #111b36; --color-navy-700: #162244;
+            --color-cyan-400: #22d3ee; --color-cyan-500: #06b6d4;
+            --color-white: #ffffff; --color-gray-300: #d1d5db; --color-gray-400: #9ca3af; --color-gray-500: #6b7280;
+            --color-red-400: #f87171; --color-green-400: #34d399; --color-amber-400: #fbbf24;
+            --glass-bg: rgba(17, 27, 54, 0.6); --glass-border: rgba(34, 211, 238, 0.15);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --max-width: 1100px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-sans); background-color: var(--color-navy-950); color: var(--color-gray-300); line-height: 1.7; }
+        a { color: var(--color-cyan-400); text-decoration: none; }
+        a:hover { color: var(--color-cyan-500); }
+        h1, h2, h3 { color: var(--color-white); }
+        h1 { font-size: 2.2rem; font-weight: 800; }
+        h2 { font-size: 1.6rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; }
+        h3 { font-size: 1.1rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin: 0 0 1rem 1.5rem; }
+        li { margin-bottom: 0.4rem; }
+        code { font-family: var(--font-mono); background: rgba(255,255,255,0.06); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
+        pre { background: var(--color-navy-800); border: 1px solid var(--glass-border); border-radius: 8px; padding: 1rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6; margin-bottom: 1rem; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        th { background: var(--color-navy-700); padding: 0.7rem 1rem; text-align: left; font-weight: 600; color: var(--color-white); border-bottom: 2px solid var(--color-cyan-500); }
+        td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--glass-border); }
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        .header { padding: 3rem 1.5rem 2rem; background: linear-gradient(180deg, var(--color-navy-900), var(--color-navy-950)); border-bottom: 1px solid var(--glass-border); }
+        .header-inner { max-width: var(--max-width); margin: 0 auto; }
+        .toc { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; }
+        .toc ul { list-style: none; margin: 0.5rem 0 0; }
+        .toc li { padding: 0.3rem 0; }
+
+        .issue { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 10px; margin-bottom: 1.5rem; overflow: hidden; }
+        .issue-header { background: var(--color-navy-700); padding: 1rem 1.3rem; display: flex; align-items: flex-start; gap: 0.8rem; border-bottom: 1px solid var(--glass-border); }
+        .issue-header .severity { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 50px; flex-shrink: 0; margin-top: 0.15rem; }
+        .severity.critical { background: rgba(239, 68, 68, 0.15); color: var(--color-red-400); }
+        .severity.warning { background: rgba(251, 191, 36, 0.15); color: var(--color-amber-400); }
+        .severity.info { background: rgba(6, 182, 212, 0.15); color: var(--color-cyan-400); }
+        .issue-body { padding: 1.3rem; }
+        .issue-body h4 { color: var(--color-white); margin-bottom: 0.5rem; }
+        .fix { background: rgba(16, 185, 129, 0.06); border-left: 3px solid var(--color-green-400); padding: 0.8rem 1rem; margin: 0.8rem 0; border-radius: 0 6px 6px 0; }
+        .fix-label { font-size: 0.78rem; font-weight: 700; color: var(--color-green-400); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+        @media (max-width: 768px) { .container { padding: 1rem; } }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="header-inner">
+        <p style="color:var(--color-gray-500); font-size:0.85rem;"><a href="../index.html">← AMS Home</a></p>
+        <h1>🔧 Troubleshooting Guide</h1>
+        <p style="color:var(--color-gray-400);">Common problems and their solutions for the Woven Model Asset Management System.</p>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="toc">
+    <h3>Table of Contents</h3>
+    <ul>
+        <li><a href="#startup">App Won't Start</a></li>
+        <li><a href="#login">Login Issues</a></li>
+        <li><a href="#white-screen">White / Unstyled Screen</a></li>
+        <li><a href="#db-locked">Database Locked Errors</a></li>
+        <li><a href="#db-corrupt">Corrupted Database</a></li>
+        <li><a href="#slow">Slow Performance</a></li>
+        <li><a href="#import-fail">Import Fails or Shows Errors</a></li>
+        <li><a href="#barcode-fail">Barcode Generation Fails</a></li>
+        <li><a href="#backup">Backup Not Working</a></li>
+        <li><a href="#license">License Activation Problems</a></li>
+        <li><a href="#community-limit">Hit the 10-Asset Limit (Community)</a></li>
+        <li><a href="#missing-features">Features Greyed Out / Missing</a></li>
+        <li><a href="#window-controls">Missing Window Controls</a></li>
+        <li><a href="#data-lost">Lost Data / Accidental Deletion</a></li>
+        <li><a href="#complete-reset">Complete Reset</a></li>
+        <li><a href="#logs">Reading the Logs</a></li>
+        <li><a href="#support">Getting Support</a></li>
+    </ul>
+</div>
+
+<!-- APP WON'T START -->
+<h2 id="startup">App Won't Start</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity critical">CRITICAL</span>
+        <div><strong>Application launches but immediately closes, or nothing happens when you double-click the EXE.</strong></div>
+    </div>
+    <div class="issue-body">
+        <h4>Possible Causes & Fixes</h4>
+
+        <div class="fix">
+            <div class="fix-label">Fix 1: Kill Lingering Processes</div>
+            <p>Sometimes a previous instance didn't fully close. Kill all Electron and AMS processes:</p>
+            <pre>taskkill /f /im "Woven Model AMS.exe"
+taskkill /f /im electron.exe</pre>
+            <p>Then try launching again.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Check the Logs</div>
+            <p>Open the app log file to see what went wrong:</p>
+            <pre>notepad "%APPDATA%\woven-model-ams\Logs\app.log"</pre>
+            <p>Look for lines with <code>"level":"error"</code>. Common startup errors include missing database files, permission issues, or native module failures.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Database Locked</div>
+            <p>If the log shows "SQLITE_BUSY" or "database is locked", a previous instance may still be holding the lock. Follow the Database Locked section below.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 4: Corrupted Database</div>
+            <p>If the log mentions database corruption, rename the database and restart. The app will create a fresh one:</p>
+            <pre>cd "%APPDATA%\woven-model-ams\Data"
+ren AssetManagement.db AssetManagement.db.corrupt</pre>
+            <p>You can try restoring from a backup afterward.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 5: Reinstall</div>
+            <p><a href="https://drive.google.com/file/d/1U9v290Rl54owcKxcpnMnNYWgs0h0HxBV/view?usp=sharing" target="_blank" rel="noopener noreferrer">Download a fresh copy</a> of the installer or portable EXE and reinstall. Your data is stored in <code>%APPDATA%\woven-model-ams</code> and won't be affected by a reinstall.</p>
+        </div>
+    </div>
+</div>
+
+<!-- LOGIN ISSUES -->
+<h2 id="login">Login Issues</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity warning">WARNING</span>
+        <div><strong>Can't log in — "Invalid credentials", no admin account, or Setup page won't appear.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Reset Your Password</div>
+            <p>If you forgot the admin password, you can reset it directly in the database:</p>
+            <pre>sqlite3 "%APPDATA%\woven-model-ams\Data\AssetManagement.db"
+SELECT * FROM users;                         -- see all users
+UPDATE users SET password_hash = NULL WHERE username = 'admin';  -- clear password
+.quit</pre>
+            <p>Then restart the app. You'll be prompted to create a new password via the Setup page.</p>
+            <p>If you don't have sqlite3 installed, use the bootstrap script instead.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: No Admin Account Exists</div>
+            <p>If the database was reset or this is a fresh deployment and the Setup page isn't appearing, create an admin user manually:</p>
+            <pre>node scripts/create-test-user.cjs</pre>
+            <p>This creates: <code>admin</code> / <code>admin123</code>. Log in and change the password immediately.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Session Expired</div>
+            <p>If you were kicked out mid-session, your session token expired. Default timeout is 8 hours. Log in again. You can adjust the timeout in Settings → Session Timeout.</p>
+        </div>
+    </div>
+</div>
+
+<!-- WHITE SCREEN -->
+<h2 id="white-screen">White / Unstyled Screen</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity critical">CRITICAL</span>
+        <div><strong>The app window opens but the UI is completely white, or text is unstyled / hard to read.</strong></div>
+    </div>
+    <div class="issue-body">
+        <h4>Symptom</h4>
+        <p>The Tailwind CSS was not included in the production build. The bundled CSS file is only ~15KB (fonts only) instead of ~41KB (full utility classes).</p>
+
+        <div class="fix">
+            <div class="fix-label">Fix (For Developers Building from Source)</div>
+            <p>This is a known build issue. After <code>npm run build</code>, you must generate and inject Tailwind CSS manually:</p>
+            <pre>npm run build
+node /tmp/build-tailwind.cjs</pre>
+            <p>Then copy the generated CSS over the Vite output:</p>
+            <pre>$assetsDir = "out\renderer\assets"
+$viteCss = Get-ChildItem $assetsDir -Filter "index-*.css" | Select-Object -First 1
+Copy-Item "$assetsDir\index.css" $viteCss.FullName -Force</pre>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix (For End Users)</div>
+            <p>If you downloaded a pre-built installer or zip and see a white screen, contact support — the build is missing the CSS step. Download a corrected build.</p>
+        </div>
+    </div>
+</div>
+
+<!-- DB LOCKED -->
+<h2 id="db-locked">Database Locked Errors</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity warning">WARNING</span>
+        <div><strong>Error messages about "SQLITE_BUSY", "database is locked", or operations hanging indefinitely.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Kill All Processes</div>
+            <pre>taskkill /f /im electron.exe
+taskkill /f /im "Woven Model AMS.exe"</pre>
+            <p>Wait 5 seconds, then relaunch.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Clear WAL Files Manually</div>
+            <p>The database uses WAL (Write-Ahead Log) mode. Stale WAL files can sometimes cause lock contention. Close the app, then:</p>
+            <pre>cd "%APPDATA%\woven-model-ams\Data"
+del AssetManagement.db-wal
+del AssetManagement.db-shm</pre>
+            <p>These files will be recreated automatically on next launch.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Restart Your Computer</div>
+            <p>If taskkill doesn't work or processes are stuck, a full reboot will clear all file locks.</p>
+        </div>
+    </div>
+</div>
+
+<!-- DB CORRUPT -->
+<h2 id="db-corrupt">Corrupted Database</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity critical">CRITICAL</span>
+        <div><strong>App crashes on startup with database errors, or data appears inconsistent / missing.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Restore from Backup</div>
+            <p>If you have a recent backup, restore it:</p>
+            <pre># Stop the app first
+cd "%APPDATA%\woven-model-ams\Data"
+copy AssetManagement.db AssetManagement.db.pre-restore   # safety copy
+copy ..\Backups\AssetManagement_Backup_YYYY-MM-DD.db AssetManagement.db</pre>
+            <p>Replace <code>YYYY-MM-DD</code> with the actual backup date.</p>
+            <p>You can also restore via the app UI: Settings → Backup → select a backup → Restore.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Repair with SQLite</div>
+            <pre>sqlite3 "%APPDATA%\woven-model-ams\Data\AssetManagement.db"
+PRAGMA integrity_check;
+-- If errors found:
+.mode insert
+.output dump.sql
+.dump
+.output stdout
+.quit
+-- Then create a fresh DB from the dump:
+sqlite3 new.db < dump.sql</pre>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Start Fresh (Last Resort)</div>
+            <p>Rename the corrupted database so the app creates a new one:</p>
+            <pre>ren AssetManagement.db AssetManagement.db.corrupt_2026</pre>
+            <p>Restart the app. You'll need to recreate your admin account and re-import data. If you have a backup, restore it after creating the admin account.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLOW -->
+<h2 id="slow">Slow Performance</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>App feels sluggish — pages take seconds to load, tables are slow to scroll, search is unresponsive.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Check Database Size</div>
+            <pre>$db = "$env:APPDATA\woven-model-ams\Data\AssetManagement.db"
+(Get-Item $db).Length / 1MB</pre>
+            <p>If the database is >500MB, consider archiving old audit logs:</p>
+            <pre>sqlite3 "$env:APPDATA\woven-model-ams\Data\AssetManagement.db"
+DELETE FROM audit_logs WHERE created_at < date('now', '-1 year');
+PRAGMA wal_checkpoint(TRUNCATE);
+VACUUM;</pre>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Rebuild Indexes</div>
+            <pre>sqlite3 "$env:APPDATA\woven-model-ams\Data\AssetManagement.db"
+REINDEX;</pre>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Close Other Applications</div>
+            <p>AMS uses ~200-500MB RAM. If you're running many applications simultaneously, close some to free up memory.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 4: Reduce Page Size</div>
+            <p>In the Assets table, reduce the "Items per page" setting. Smaller pages load faster.</p>
+        </div>
+    </div>
+</div>
+
+<!-- IMPORT FAILS -->
+<h2 id="import-fail">Import Fails or Shows Errors</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity warning">WARNING</span>
+        <div><strong>When importing data, you see error messages, no rows are imported, or the preview shows garbled data.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Check File Format</div>
+            <p>Supported formats:</p>
+            <ul>
+                <li>Excel: <code>.xlsx</code> or <code>.xls</code></li>
+                <li>CSV: <code>.csv</code></li>
+            </ul>
+            <p>Make sure your file is not password-protected or in an unsupported format (e.g., OpenDocument .ods).</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Map Columns Correctly</div>
+            <p>After selecting your file, you must map your spreadsheet columns to AMS fields. Make sure:</p>
+            <ul>
+                <li>Every <strong>required</strong> AMS field has a column mapped to it</li>
+                <li>Column names in the dropdowns match your spreadsheet headers</li>
+            </ul>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Clean Your Data</div>
+            <ul>
+                <li>Remove empty rows at the top of the spreadsheet</li>
+                <li>Make sure dates are in a recognizable format (YYYY-MM-DD recommended)</li>
+                <li>Ensure numbers are formatted as numbers, not text</li>
+                <li>Remove any merged cells</li>
+            </ul>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 4: Community Edition Limit</div>
+            <p>If you're on the Community Edition, you can only import up to 10 total assets. If you already have assets in the system, you won't be able to import more without upgrading or deleting existing assets.</p>
+        </div>
+    </div>
+</div>
+
+<!-- BARCODE FAIL -->
+<h2 id="barcode-fail">Barcode Generation Fails</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>Error "ReferenceError: document is not defined" when generating barcodes, or nothing happens.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Use the Settings UI Workaround</div>
+            <p>Barcode generation in the main process has a known issue with <code>jsbarcode</code> requiring a DOM. Use the barcode generation option from the <strong>Settings</strong> page, which runs through the renderer.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Check Your Edition</div>
+            <p>Barcode and QR code generation is only available in <strong>Professional</strong> and <strong>Enterprise</strong> editions. Community Edition users cannot generate barcodes.</p>
+        </div>
+    </div>
+</div>
+
+<!-- BACKUP -->
+<h2 id="backup">Backup Not Working</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity warning">WARNING</span>
+        <div><strong>Auto backups aren't being created, manual backup fails, or backup files are empty.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Check Your Edition</div>
+            <p>Auto backups are only available in <strong>Professional</strong> and <strong>Enterprise</strong> editions. Community Edition users must back up manually by copying the database file.</p>
+            <pre>copy "%APPDATA%\woven-model-ams\Data\AssetManagement.db" "%APPDATA%\woven-model-ams\Backups\manual_backup.db"</pre>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Check Disk Space</div>
+            <p>Make sure you have enough free disk space. Each backup is roughly the same size as your database.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Check Backup Settings</div>
+            <p>Go to Settings and verify:</p>
+            <ul>
+                <li>Auto backup is enabled</li>
+                <li>Backup interval is set (default: 24 hours)</li>
+                <li>Max backups is > 0 (default: 10)</li>
+            </ul>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 4: Permissions</div>
+            <p>The app may not have write permission in the Backups folder. Verify:</p>
+            <pre>dir "%APPDATA%\woven-model-ams\Backups\"</pre>
+            <p>If you see permission errors, run the app as Administrator once to create the folder, then return to normal user mode.</p>
+        </div>
+    </div>
+</div>
+
+<!-- LICENSE PROBLEMS -->
+<h2 id="license">License Activation Problems</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity warning">WARNING</span>
+        <div><strong>License key won't activate, shows "Invalid license key", or features remain locked after activation.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Activation Applies Immediately</div>
+            <p>Feature gates are re-evaluated on every call — unlocked features take effect as soon as the license is activated; <strong>no restart is required</strong>. If a locked feature still seems unavailable after activating, check the License page to confirm the edition was applied.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Check Internet Connection</div>
+            <p>License activation requires a one-time internet connection to validate the key against the licensing server. Make sure you're online during activation. After activation, the app works offline.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 3: Check License Key Format</div>
+            <p>The key should be a long alphanumeric string. Make sure you're copying the entire key without extra spaces. Paste it exactly as provided.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 4: Clear and Retry</div>
+            <p>If a previous activation attempt failed, clear the stored license and try again:</p>
+            <pre>del "%APPDATA%\woven-model-ams\license.dat"</pre>
+            <p>Restart the app and re-enter your license key.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 5: Check License Status</div>
+            <p>Go to the License page (shield icon). If it shows "Expired", your subscription may have ended. Contact support to renew.</p>
+        </div>
+    </div>
+</div>
+
+<!-- COMMUNITY LIMIT -->
+<h2 id="community-limit">Hit the 10-Asset Limit (Community)</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>Can't add more assets — getting an error about reaching the maximum.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Upgrade Your License</div>
+            <p>The Community Edition is limited to <strong>10 assets</strong>. Upgrade to Professional or Enterprise for unlimited assets.</p>
+            <p>Visit the <a href="https://woven-licensing-production.up.railway.app">Woven Model Licensing Portal</a> or <a href="https://calendar.app.google/VcNdH476r22az1kj7">book a meeting</a> to purchase a license.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Delete Unused Assets</div>
+            <p>If you need to stay on Community Edition, delete some existing assets to make room for new ones. Each deletion permanently removes the asset and its history — back up first.</p>
+        </div>
+    </div>
+</div>
+
+<!-- MISSING FEATURES -->
+<h2 id="missing-features">Features Greyed Out / Missing</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>Buttons like "Generate Barcode", "Check Out", "Attachments", or "Audit History" are missing or greyed out.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix: Check Your Edition</div>
+            <p>Many features are edition-gated. Check your license on the License page:</p>
+            <table>
+                <tr><th>Feature</th><th>Available In</th></tr>
+                <tr><td>Assets (up to 10)</td><td>All editions</td></tr>
+                <tr><td>Unlimited Assets</td><td>Professional, Enterprise</td></tr>
+                <tr><td>Barcode & QR</td><td>Professional, Enterprise</td></tr>
+                <tr><td>Check-In/Out</td><td>Professional, Enterprise</td></tr>
+                <tr><td>Attachments</td><td>Professional, Enterprise</td></tr>
+                <tr><td>Audit History</td><td>Professional, Enterprise</td></tr>
+                <tr><td>Auto Backups</td><td>Professional, Enterprise</td></tr>
+                <tr><td>PDF Export</td><td>Enterprise</td></tr>
+                <tr><td>Unlimited Users</td><td>Enterprise</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- WINDOW CONTROLS -->
+<h2 id="window-controls">Missing Window Controls</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>No minimize, maximize, or close buttons in the top-right corner of the window.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Use Keyboard Shortcuts</div>
+            <ul>
+                <li><strong>Minimize:</strong> Windows Key + Down Arrow</li>
+                <li><strong>Maximize:</strong> Windows Key + Up Arrow</li>
+                <li><strong>Close:</strong> Alt + F4</li>
+            </ul>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Check Build Version</div>
+            <p>Window controls were added in a recent update. Make sure you're running the latest build. Download the latest version from the AMS page.</p>
+        </div>
+    </div>
+</div>
+
+<!-- DATA LOST -->
+<h2 id="data-lost">Lost Data / Accidental Deletion</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity critical">CRITICAL</span>
+        <div><strong>Accidentally deleted assets, employees, or other data — need to recover it.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Fix 1: Restore from Backup</div>
+            <p>This is exactly what backups are for. Restore the most recent backup from before the deletion:</p>
+            <pre># Stop the app
+cd "%APPDATA%\woven-model-ams\Data"
+copy AssetManagement.db AssetManagement.db.safety   # safety copy first
+copy ..\Backups\AssetManagement_Backup_BEFORE_DELETION.db AssetManagement.db</pre>
+            <p>Or use the restore function in Settings → Backup.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Fix 2: Check Audit Logs (If You Can)</div>
+            <p>If you have Professional or Enterprise and can still access the History page, you can see exactly what was deleted and when. This helps you choose the right backup to restore.</p>
+        </div>
+
+        <div class="fix">
+            <div class="fix-label">Prevention</div>
+            <ul>
+                <li>Enable auto-backups in Settings</li>
+                <li>Create a manual backup before bulk operations</li>
+                <li>Use the role system — give delete permissions only to trusted admins</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- COMPLETE RESET -->
+<h2 id="complete-reset">Complete Reset</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity warning">WARNING</span>
+        <div><strong>You want to start completely fresh — remove all data, settings, and start over.</strong></div>
+    </div>
+    <div class="issue-body">
+        <div class="fix">
+            <div class="fix-label">Step-by-Step Reset</div>
+            <ol>
+                <li><strong>Close the app</strong> completely</li>
+                <li>Delete the database:
+                    <pre>del "%APPDATA%\woven-model-ams\Data\AssetManagement.db"</pre>
+                </li>
+                <li>Optionally, delete backups and license too:
+                    <pre>rmdir /s /q "%APPDATA%\woven-model-ams\Backups"
+del "%APPDATA%\woven-model-ams\license.dat"</pre>
+                </li>
+                <li>Optionally, clear logs:
+                    <pre>del "%APPDATA%\woven-model-ams\Logs\app.log"</pre>
+                </li>
+                <li>Restart the app — the Setup page will appear for a fresh admin account</li>
+            </ol>
+        </div>
+        <div class="fix">
+            <div class="fix-label">Nuclear Option (Delete Everything)</div>
+            <pre>rmdir /s /q "%APPDATA%\woven-model-ams"</pre>
+            <p>This removes the entire app data folder. Next launch creates everything from scratch.</p>
+        </div>
+    </div>
+</div>
+
+<!-- LOGS -->
+<h2 id="logs">Reading the Logs</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>How to find and read the application logs for diagnosing any issue.</strong></div>
+    </div>
+    <div class="issue-body">
+        <h4>Log Location</h4>
+        <pre>%APPDATA%\woven-model-ams\Logs\app.log</pre>
+
+        <h4>Viewing Logs (PowerShell)</h4>
+        <pre># Last 50 lines
+Get-Content "$env:APPDATA\woven-model-ams\Logs\app.log" -Tail 50
+
+# Errors only
+Get-Content "$env:APPDATA\woven-model-ams\Logs\app.log" | Select-String '"level":"error"'
+
+# Warnings and errors
+Get-Content "$env:APPDATA\woven-model-ams\Logs\app.log" | Select-String '"level":"warn"|"level":"error"'</pre>
+
+        <h4>Log Format</h4>
+        <p>Each line is a JSON object with <code>timestamp</code>, <code>level</code>, and <code>message</code> fields. Example:</p>
+        <pre>{"timestamp":"2026-07-21T04:50:00.000Z","level":"info","message":"Asset created: LAPTOP-001"}</pre>
+
+        <h4>Log Rotation</h4>
+        <ul>
+            <li>Max 5MB per log file</li>
+            <li>Max 5 files retained (app.log, app.log.1 through app.log.5)</li>
+            <li>Oldest file is auto-deleted when rotation limit is reached</li>
+        </ul>
+    </div>
+</div>
+
+<!-- SUPPORT -->
+<h2 id="support">Getting Support</h2>
+
+<div class="issue">
+    <div class="issue-header">
+        <span class="severity info">INFO</span>
+        <div><strong>You've tried everything and still need help.</strong></div>
+    </div>
+    <div class="issue-body">
+        <h4>Before Contacting Support</h4>
+        <ol>
+            <li><strong>Grab your logs:</strong> <code>notepad "%APPDATA%\woven-model-ams\Logs\app.log"</code></li>
+            <li><strong>Note your edition:</strong> Check the License page</li>
+            <li><strong>Describe the steps:</strong> What were you doing when the problem occurred?</li>
+            <li><strong>Screenshot the error:</strong> If an error message appeared, capture it</li>
+        </ol>
+
+        <h4>Contact Options</h4>
+        <ul>
+            <li><strong>Book a support call:</strong> <a href="https://calendar.app.google/VcNdH476r22az1kj7" target="_blank" rel="noopener noreferrer">Google Calendar</a></li>
+            <li><strong>Email:</strong> support@wovenmodel.com</li>
+            <li><strong>Documentation:</strong> <a href="user-guide.html">User Guide</a></li>
+        </ul>
+
+        <h4>Quick Reference</h4>
+        <table>
+            <tr><th>Item</th><th>Path</th></tr>
+            <tr><td>Database</td><td><code>%APPDATA%\woven-model-ams\Data\AssetManagement.db</code></td></tr>
+            <tr><td>Backups</td><td><code>%APPDATA%\woven-model-ams\Backups\</code></td></tr>
+            <tr><td>Logs</td><td><code>%APPDATA%\woven-model-ams\Logs\app.log</code></td></tr>
+            <tr><td>License</td><td><code>%APPDATA%\woven-model-ams\license.dat</code></td></tr>
+            <tr><td>Kill all processes</td><td><code>taskkill /f /im "Woven Model AMS.exe"</code></td></tr>
+            <tr><td>Reset admin password</td><td><code>node scripts/create-test-user.cjs</code></td></tr>
+        </table>
+    </div>
+</div>
+
+</div>
+</body>
+</html>
