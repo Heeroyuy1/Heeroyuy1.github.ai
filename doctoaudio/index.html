@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DocToAudio — Document to Audiobook Converter by Woven Model. Convert PDF, DOCX, EPUB, and more into high-quality audiobooks with translation and 3 TTS engines.">
+    <meta name="keywords" content="audiobook, text-to-speech, TTS, document converter, PDF to audio, EPUB to audiobook, translation, Edge TTS, OpenAI, Woven Model">
+    <meta name="author" content="Jude Yearwood">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="DocToAudio — Document to Audiobook Converter | Woven Model">
+    <meta property="og:description" content="Convert documents into professional audiobooks with 3 TTS engines and built-in multilingual translation. Free Edge TTS, premium OpenAI voices, and offline Local TTS.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wovenmodel.com/doctoaudio">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="favicon.ico">
+    <title>DocToAudio — Document to Audiobook Converter | Woven Model</title>
+
+    <style>
+        :root {
+            --color-navy-950: #0a0f1e;
+            --color-navy-900: #0d1428;
+            --color-navy-800: #111b36;
+            --color-navy-700: #162244;
+            --color-navy-600: #1c2d56;
+            --color-navy-500: #243a6b;
+            --color-cyan-400: #22d3ee;
+            --color-cyan-500: #06b6d4;
+            --color-cyan-600: #0891b2;
+            --color-cyan-700: #0e7490;
+            --color-white: #ffffff;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            --color-green-400: #34d399;
+            --color-green-500: #10b981;
+            --color-red-400: #f87171;
+            --color-red-500: #ef4444;
+            --color-amber-400: #fbbf24;
+            --glass-bg: rgba(17, 27, 54, 0.6);
+            --glass-border: rgba(34, 211, 238, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glass-blur: blur(16px);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --transition-fast: 150ms ease;
+            --transition-normal: 300ms ease;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --max-width: 1200px;
+            --nav-height: 72px;
+        }
+        
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-navy-950);
+            color: var(--color-gray-200);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: var(--color-cyan-400); text-decoration: none; transition: color var(--transition-fast); }
+        a:hover { color: var(--color-cyan-500); }
+        h1, h2, h3, h4, h5, h6 { line-height: 1.25; color: var(--color-white); }
+        h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; }
+        h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; }
+        h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        code {
+            font-family: var(--font-mono);
+            background: rgba(255,255,255,0.06);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--color-navy-800);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--color-navy-700);
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-white);
+            border-bottom: 2px solid var(--color-cyan-600);
+        }
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--color-gray-300);
+        }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 var(--glass-border);
+        }
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-white);
+            letter-spacing: -0.02em;
+        }
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-cyan-400), var(--color-cyan-600));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--color-navy-950);
+            flex-shrink: 0;
+        }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--color-gray-300);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+        .nav-links a:hover { color: var(--color-white); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950) !important;
+            padding: 0.55rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600 !important;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35); }
+
+        .page-header {
+            padding: calc(var(--nav-height) + 3rem) 1.5rem 3rem;
+            background: linear-gradient(180deg, var(--color-navy-900) 0%, var(--color-navy-950) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.06), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .page-header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .page-breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-gray-500);
+            margin-bottom: 1.5rem;
+        }
+        .page-breadcrumb a { color: var(--color-gray-400); }
+        .page-breadcrumb span { color: var(--color-gray-500); }
+        .page-header h1 { margin-bottom: 0.75rem; }
+        .page-header .subtitle {
+            font-size: 1.1rem;
+            color: var(--color-gray-400);
+            max-width: 700px;
+        }
+        .page-header .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-top: 1.5rem;
+        }
+        .page-header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-cyan-400);
+        }
+        .page-header .badge.green { color: var(--color-green-400); background: rgba(16, 185, 129, 0.1); }
+        .page-header .badge.amber { color: var(--color-amber-400); background: rgba(251, 191, 36, 0.1); }
+
+        .section {
+            padding: 4rem 1.5rem;
+            position: relative;
+        }
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-header { margin-bottom: 2.5rem; }
+        .section-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-cyan-400);
+            margin-bottom: 0.5rem;
+        }
+        .section-title { margin-bottom: 0.5rem; }
+        .section-subtitle { color: var(--color-gray-400); max-width: 700px; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.2rem;
+        }
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            transition: all var(--transition-normal);
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 { margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .feature-card p { color: var(--color-gray-400); font-size: 0.88rem; margin: 0; }
+
+        .tab-grid {
+            display: grid;
+            gap: 2rem;
+        }
+        .tab-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        .tab-card:hover { border-color: rgba(34, 211, 238, 0.25); }
+        .tab-card-header {
+            background: var(--color-navy-700);
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .tab-card-header h3 { font-size: 1.1rem; margin: 0; }
+        .tab-card-body { padding: 1.8rem; }
+        .tab-card-body p { color: var(--color-gray-300); font-size: 0.92rem; }
+        .tab-card-body ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .tab-card-body li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+            color: var(--color-gray-300);
+        }
+        .tab-card-body li::before {
+            content: '▸';
+            color: var(--color-cyan-400);
+            flex-shrink: 0;
+        }
+
+        .engine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+        .engine-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+        .engine-card:hover { transform: translateY(-3px); border-color: rgba(34, 211, 238, 0.3); }
+        .engine-card-icon { font-size: 2.2rem; margin-bottom: 0.8rem; }
+        .engine-card h3 { margin-bottom: 0.3rem; }
+        .engine-card .price { font-size: 1.4rem; font-weight: 800; color: var(--color-cyan-400); margin-bottom: 0.5rem; }
+        .engine-card .price.free { color: var(--color-green-400); }
+        .engine-card .price.low { color: var(--color-amber-400); }
+        .engine-card p { color: var(--color-gray-400); font-size: 0.85rem; margin: 0; }
+
+        .comparison-table { font-size: 0.85rem; }
+        .comparison-table td:first-child { font-weight: 500; }
+        .comparison-table td:nth-child(2) { text-align: center; }
+        .comparison-table td:nth-child(3) { text-align: center; }
+        .comparison-table td:nth-child(4) { text-align: center; }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .highlight-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            transition: all var(--transition-normal);
+        }
+        .highlight-card:hover { border-color: rgba(34, 211, 238, 0.25); }
+        .highlight-card h4 { color: var(--color-cyan-400); font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .highlight-card p { color: var(--color-gray-400); font-size: 0.85rem; margin: 0; }
+
+        .screenshot-wrap {
+            margin: 1.5rem 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .screenshot-wrap img { width: 100%; display: block; }
+
+        .workflow-steps {
+            counter-reset: step;
+        }
+        .workflow-step {
+            display: flex;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .workflow-step:last-child { border-bottom: none; }
+        .workflow-step-num {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--color-cyan-400);
+        }
+        .workflow-step-content h4 { font-size: 0.95rem; color: var(--color-white); margin-bottom: 0.2rem; }
+        .workflow-step-content p { color: var(--color-gray-400); font-size: 0.85rem; margin: 0; }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-navy-800), var(--color-navy-700));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .cta-section h2 { margin-bottom: 0.75rem; }
+        .cta-section p { color: var(--color-gray-400); max-width: 500px; margin: 0 auto 1.5rem; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            font-family: var(--font-sans);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(6, 182, 212, 0.4);
+            color: var(--color-navy-950);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-white);
+            border: 1px solid var(--color-gray-600);
+        }
+        .btn-secondary:hover { border-color: var(--color-cyan-400); color: var(--color-cyan-400); transform: translateY(-2px); }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+        .footer {
+            background: var(--color-navy-900);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 1.5rem 1.5rem;
+        }
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            text-align: center;
+            color: var(--color-gray-600);
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--color-gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: color var(--transition-fast);
+        }
+        .back-link:hover { color: var(--color-cyan-400); }
+        .back-link::before { content: '←'; }
+
+        .page-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+        .page-tab {
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-gray-400);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            background: none;
+            font-family: var(--font-sans);
+        }
+        .page-tab:hover { color: var(--color-white); }
+        .page-tab.active {
+            color: var(--color-cyan-400);
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .engine-grid { grid-template-columns: 1fr; }
+            .highlights-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.8rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            .cta-section { padding: 2rem 1.2rem; }
+            .tab-card-header { padding: 1rem 1.2rem; }
+            .tab-card-body { padding: 1.2rem; }
+            .nav-links { display: none; }
+            .workflow-step { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="https://www.wovenmodel.com/" class="nav-logo" aria-label="Woven Model Home">
+                <div class="nav-logo-icon">WM</div>
+                Woven Model
+            </a>
+            <div class="nav-links">
+                <a href="https://www.wovenmodel.com/#products">Products</a>
+                <a href="https://www.wovenmodel.com/#services">Services</a>
+                <a href="https://www.wovenmodel.com/#about">About</a>
+                <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="nav-cta" target="_blank" rel="noopener noreferrer">Book a Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-breadcrumb">
+                <a href="https://www.wovenmodel.com/">Home</a>
+                <span>/</span>
+                <a href="https://www.wovenmodel.com/#products">Products</a>
+                <span>/</span>
+                <span>DocToAudio</span>
+            </div>
+            <a href="https://www.wovenmodel.com/#products" class="back-link">Back to Products</a>
+            <h1>DocToAudio — Document to Audiobook Converter</h1>
+            <p class="subtitle">
+                A professional desktop application that converts PDF, DOCX, EPUB, TXT, and RTF documents into
+                high-quality audiobooks. Features <strong>3 TTS engines</strong>, built-in <strong>multilingual translation</strong>,
+                and a background conversion queue — all wrapped in a sleek Woven Model interface.
+            </p>
+            <div class="badge-row">
+                <span class="badge">🐍 Python + PyQt6</span>
+                <span class="badge">🎙️ 3 TTS Engines</span>
+                <span class="badge">🌐 Translation (100+ langs)</span>
+                <span class="badge green">🎵 MP3 / WAV / OGG</span>
+                <span class="badge amber">🔑 Licensed (14d Trial)</span>
+                <span class="badge">📄 PDF / DOCX / EPUB / TXT / RTF</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" style="padding-top: 2rem;">
+        <div class="section-inner">
+
+            <!-- TAB: Overview / Features -->
+            <div class="page-tabs">
+                <span class="page-tab active" onclick="scrollToSection('overview')">Overview</span>
+                <span class="page-tab" onclick="scrollToSection('features')">Features</span>
+                <span class="page-tab" onclick="scrollToSection('engines')">TTS Engines</span>
+                <span class="page-tab" onclick="scrollToSection('translation')">Translation</span>
+                <span class="page-tab" onclick="scrollToSection('screenshots')">Screenshots</span>
+                <span class="page-tab" onclick="scrollToSection('workflow')">Workflow</span>
+                <span class="page-tab" onclick="scrollToSection('install')">Get Started</span>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview">
+                <div class="section-header">
+                    <span class="section-label">Overview</span>
+                    <h2 class="section-title">What Is DocToAudio?</h2>
+                    <p class="section-subtitle">
+                        DocToAudio turns any document into an audiobook. Import a PDF, EPUB, or Word file —
+                        or paste text directly — and get back a professional audio file. With three TTS engines,
+                        built-in translation to 100+ languages, and speech-optimized output, it's the most
+                        versatile document-to-audio tool on Windows.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📄</div>
+                        <h3>Multi-Format Import</h3>
+                        <p>Drag-and-drop or browse for PDF, DOCX, TXT, RTF, and EPUB files. Paste raw text for instant conversion. Supports all major document formats.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🎙️</div>
+                        <h3>3 TTS Engines</h3>
+                        <p>Choose from Local Windows SAPI5 (offline), OpenAI (premium neural voices), or Edge TTS (free neural voices, no API key needed). Switch with one click.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🌐</div>
+                        <h3>Built-In Translation</h3>
+                        <p>Auto-detect the source language of your document, select any of 100+ target languages, and generate the audiobook in the translated language. Spanish book → English audiobook in one click.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔊</div>
+                        <h3>Speech Optimizer</h3>
+                        <p>Before TTS generation, translated text is automatically optimized: abbreviations expanded, comma chains split, sentences restructured for natural narration.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">⏳</div>
+                        <h3>Background Queue</h3>
+                        <p>Queue multiple document conversions and keep working while they process. Track progress, retry failed jobs, and pause/resume the queue at any time.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📚</div>
+                        <h3>Audiobook Library</h3>
+                        <p>Browse, search, sort, and play completed audiobooks right in the app. Mark favorites, rename titles, open file locations, and delete with confirmation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshots Preview -->
+            <div style="margin-top: 3rem;">
+                <div class="section-header">
+                    <span class="section-label">At a Glance</span>
+                    <h2 class="section-title">The DocToAudio Interface</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem;">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🏠</div>
+                        <h3>Dashboard</h3>
+                        <p>KPI cards showing total audiobooks, total duration, and storage used. Quick-action buttons and recent audiobook list.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🔄</div>
+                        <h3>Convert + Translate</h3>
+                        <p>Document import, language auto-detection, target language selection, TTS engine/voice config, 30-second preview, and queue submission.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📖</div>
+                        <h3>Library</h3>
+                        <p>Searchable table of all your audiobooks with columns for title, source, duration, voice, size, and creation date. Inline player and file management.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURES SECTION -->
+            <div id="features" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Features</span>
+                    <h2 class="section-title">Every Feature, Explained</h2>
+                    <p class="section-subtitle">DocToAudio is a full-featured desktop application. Below is a complete breakdown of every tab and what it does.</p>
+                </div>
+
+                <div class="tab-grid">
+
+                    <!-- Dashboard Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">🏠</span>
+                            <h3>Dashboard Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> At-a-glance summary of your conversion activity and library stats.</p>
+                            <h4 style="color: white; margin-top: 1rem;">What You See</h4>
+                            <ul>
+                                <li><strong>KPI Cards (3):</strong> Total Audiobooks, Total Duration, Storage Used — auto-populated from your library</li>
+                                <li><strong>Quick Actions:</strong> One-click navigation to Convert, Library, and Queue pages</li>
+                                <li><strong>Recent Audiobooks:</strong> Last 5 converted books with play buttons and duration</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Convert Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">📄</span>
+                            <h3>Convert Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> The heart of DocToAudio — import, translate, configure TTS, preview, and queue.</p>
+
+                            <h4 style="color: white; margin-top: 1rem;">Left Panel: Document Import</h4>
+                            <ul>
+                                <li><strong>Drop Zone:</strong> Drag-and-drop any supported file (PDF, DOCX, TXT, RTF, EPUB)</li>
+                                <li><strong>Format Buttons:</strong> One-click file browser for each format</li>
+                                <li><strong>Paste Text:</strong> Paste raw text for instant conversion without saving a file</li>
+                                <li><strong>File Info:</strong> Word count, character count, and file size displayed after import</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Right Panel: Translation (New)</h4>
+                            <ul>
+                                <li><strong>Detected Language:</strong> Auto-detected on file load (e.g., "Spanish (es) — 99%")</li>
+                                <li><strong>Output Language:</strong> Dropdown with 17 common languages</li>
+                                <li><strong>Translate Button:</strong> "🌐 Translate Document" — runs background QThread with progress</li>
+                                <li>On completion, translated text is TTS-optimized and used for audio generation</li>
+                                <li>Output filename includes target language (e.g., "MyBook (English).mp3")</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Right Panel: TTS Configuration</h4>
+                            <ul>
+                                <li><strong>TTS Engine:</strong> Local SAPI5 / OpenAI / Edge (Free) — three providers in one dropdown</li>
+                                <li><strong>Voice:</strong> Populated dynamically per provider</li>
+                                <li><strong>Speed:</strong> Slider from 0.5x to 3.0x</li>
+                                <li><strong>Pitch:</strong> Slider from 0.5x to 2.0x (hidden for OpenAI)</li>
+                                <li><strong>Language:</strong> Multilingual for Local/Edge, English-only for OpenAI</li>
+                                <li><strong>OpenAI Instructions:</strong> Tone and accent control for gpt-4o-mini-tts</li>
+                                <li><strong>Format/Quality:</strong> MP3, WAV, or OGG at 128k-320k</li>
+                            </ul>
+
+                            <h4 style="color: white; margin-top: 1rem;">Preview & Queue</h4>
+                            <ul>
+                                <li><strong>Generate Preview (30s):</strong> Listen before you commit. 120s safety timeout auto-resets the button</li>
+                                <li><strong>Add to Queue:</strong> Submits the job — uses translated text if translation was completed</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Library Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">📚</span>
+                            <h3>Library Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Browse, search, play, and manage all completed audiobooks.</p>
+                            <h4 style="color: white; margin-top: 1rem;">Features</h4>
+                            <ul>
+                                <li><strong>Table View:</strong> Columns for Favorite, Title, Source, Duration, Voice, Size, Created, Actions</li>
+                                <li><strong>Search:</strong> Filter by title or source file name</li>
+                                <li><strong>Sort:</strong> By Date, Title, Duration, or Size</li>
+                                <li><strong>Actions:</strong> ▶ Play (opens in default media player), 📂 Open file location, ✏️ Rename</li>
+                                <li><strong>Right-Click:</strong> Full context menu — Play, Open, Rename, Favorite, Delete</li>
+                                <li><strong>Detail Panel:</strong> Double-click a book for detailed info + inline audio player</li>
+                                <li><strong>Grid/Table Toggle:</strong> Switch between list and card views</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Queue Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">⏳</span>
+                            <h3>Queue Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Monitor and manage active, completed, and failed conversions.</p>
+                            <h4 style="color: white; margin-top: 1rem;">Features</h4>
+                            <ul>
+                                <li><strong>Auto-Refresh:</strong> Table updates every 2 seconds</li>
+                                <li><strong>Columns:</strong> #, Title, Source, Provider (🎙️/☁️/🌐), Status, Progress Bar, Voice, Speed, Format, Actions</li>
+                                <li><strong>Status Bar:</strong> Active count, Completed Today, Failed count</li>
+                                <li><strong>Controls:</strong> Pause All, Cancel All, Clear Completed</li>
+                                <li><strong>Per-Job:</strong> Cancel (queued/converting), Retry (failed), Open (completed)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">⚙️</span>
+                            <h3>Settings Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Configure all app preferences — output folder, TTS defaults, API keys, theme.</p>
+                            <h4 style="color: white; margin-top: 1rem;">Sections</h4>
+                            <ul>
+                                <li><strong>General:</strong> Output folder, default format, audio quality, startup behavior</li>
+                                <li><strong>OpenAI TTS:</strong> API key entry (with show/hide), model selection (gpt-4o-mini-tts, tts-1, tts-1-hd), default voice, voice instructions, Test Connection button with setup guide</li>
+                                <li><strong>Local TTS:</strong> Default voice, speed, pitch, language</li>
+                                <li><strong>Appearance:</strong> Theme (Dark/Light), Large Text, High Contrast modes</li>
+                                <li><strong>Licensing:</strong> Current license status + Manage License navigation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- License Tab -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">🔑</span>
+                            <h3>License Tab</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> License activation, 14-day free trial management, and deactivation.</p>
+                            <h4 style="color: white; margin-top: 1rem;">States</h4>
+                            <ul>
+                                <li><strong>Unlicensed:</strong> Activation form with key input + Start Free Trial button</li>
+                                <li><strong>Trial Active:</strong> Displays days remaining, full features unlocked</li>
+                                <li><strong>Licensed:</strong> Shows tier, expiry, days remaining, masked license key, and Deactivate button</li>
+                                <li><strong>Expired:</strong> Redirects to License page, prompts for new key</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TTS ENGINES SECTION -->
+            <div id="engines" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">TTS Engines</span>
+                    <h2 class="section-title">Three Ways to Listen</h2>
+                    <p class="section-subtitle">DocToAudio is the only document-to-audio converter with three TTS engines built in. Choose based on your needs — no other tool offers this flexibility.</p>
+                </div>
+
+                <div class="engine-grid">
+                    <div class="engine-card">
+                        <div class="engine-card-icon">🎙️</div>
+                        <h3>Local (SAPI5)</h3>
+                        <div class="price free">Free</div>
+                        <p>Windows built-in voices. <strong>No internet required.</strong> Basic quality but always available. Good for quick offline conversions.</p>
+                        <p style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--color-gray-500);">Requires ffmpeg for MP3/OGG export</p>
+                    </div>
+                    <div class="engine-card">
+                        <div class="engine-card-icon">☁️</div>
+                        <h3>OpenAI</h3>
+                        <div class="price low">~$0.015/min</div>
+                        <p>Premium GPT-4o neural voices. <strong>Best quality.</strong> Supports voice instructions for tone, accent, and style control. 10 voices available.</p>
+                        <p style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--color-gray-500);">Requires API key. No ffmpeg needed.</p>
+                    </div>
+                    <div class="engine-card">
+                        <div class="engine-card-icon">🌐</div>
+                        <h3>Edge TTS</h3>
+                        <div class="price free">Free</div>
+                        <p>Microsoft Edge neural voices. <strong>No API key needed, no payment, no setup.</strong> 22+ natural voices, 100+ languages. The best all-around choice.</p>
+                        <p style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--color-gray-500);">Requires internet. No ffmpeg needed.</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">Engine Comparison</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="comparison-table">
+                            <tr>
+                                <th>Feature</th>
+                                <th>Local (SAPI5)</th>
+                                <th>OpenAI</th>
+                                <th>Edge (Free)</th>
+                            </tr>
+                            <tr><td>Internet Required</td><td>❌ No</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+                            <tr><td>Cost</td><td>Free</td><td>~$0.015/min</td><td><strong style="color: var(--color-green-400);">Free</strong></td></tr>
+                            <tr><td>Voice Quality</td><td>Basic</td><td>Excellent</td><td>Good (Neural)</td></tr>
+                            <tr><td>Speed Control</td><td>✅ 0.5x-3x</td><td>✅ 0.25x-4x</td><td>✅ Yes</td></tr>
+                            <tr><td>Pitch Control</td><td>✅ Yes</td><td>❌ No</td><td>✅ Yes</td></tr>
+                            <tr><td>Languages</td><td>OS Voices</td><td>English only</td><td><strong>100+</strong></td></tr>
+                            <tr><td>Voice Instructions</td><td>❌ No</td><td>✅ Yes</td><td>❌ No</td></tr>
+                            <tr><td>API Key Needed</td><td>❌ No</td><td>✅ Yes</td><td><strong style="color: var(--color-green-400);">❌ No</strong></td></tr>
+                            <tr><td>ffmpeg Needed</td><td>For MP3/OGG</td><td>❌ No</td><td><strong style="color: var(--color-green-400);">❌ No</strong></td></tr>
+                            <tr><td>Voices</td><td>System</td><td>10</td><td>22+</td></tr>
+                            <tr><td>Setup Time</td><td>None</td><td>5 minutes</td><td><strong style="color: var(--color-green-400);">None</strong></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSLATION SECTION -->
+            <div id="translation" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Translation</span>
+                    <h2 class="section-title">Multilingual Audio Pipeline</h2>
+                    <p class="section-subtitle">Upload a document in any language and get an audiobook in another. The entire translation + TTS-optimization pipeline runs seamlessly in the background.</p>
+                </div>
+
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">1</div>
+                        <div class="workflow-step-content">
+                            <h4>Import a Document</h4>
+                            <p>Upload a PDF, DOCX, EPUB, TXT, or RTF file — or paste text directly. Language is auto-detected using langdetect.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">2</div>
+                        <div class="workflow-step-content">
+                            <h4>Select Target Language</h4>
+                            <p>Pick from 17 common languages (English, Spanish, French, German, Chinese, Japanese, etc.) with support for 100+ total.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">3</div>
+                        <div class="workflow-step-content">
+                            <h4>Translate</h4>
+                            <p>Click "🌐 Translate Document". Translation runs in a background QThread with progress updates. Powered by Google Translate via deep-translator — free, no API key.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">4</div>
+                        <div class="workflow-step-content">
+                            <h4>Speech Optimize</h4>
+                            <p>Translated text is automatically optimized for TTS: abbreviations expanded, semicolons replaced, comma chains split, parentheses inlined, long paragraphs broken.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">5</div>
+                        <div class="workflow-step-content">
+                            <h4>Generate Audiobook</h4>
+                            <p>Add to the queue — the translated and optimized text is used for audio. Output filename includes the target language. Use Edge TTS for best multilingual voice support.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div class="highlight-card">
+                        <h4>🔤 Language Detection</h4>
+                        <p>Uses <code>langdetect</code> for automatic source language identification from the first 2000 characters. Confidence score shown in UI.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <h4>🔄 Google Translate</h4>
+                        <p>Free neural translation via <code>deep-translator</code>. Paragraph-preserving — headings and structure maintained. Translations cached to disk.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <h4>✂️ TTS Optimizer</h4>
+                        <p>Custom <code>tts_optimizer.py</code> expands abbreviations (Dr. → Doctor, e.g. → for example), replaces punctuation, and ensures natural speech flow.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREENSHOTS SECTION -->
+            <div id="screenshots" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Screenshots</span>
+                    <h2 class="section-title">See the App in Action</h2>
+                    <p class="section-subtitle">Real screenshots from the running application showing every major page.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">📊 Dashboard</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Dashboard.png" alt="DocToAudio Dashboard page showing KPI cards, quick actions, and recent audiobooks">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">📄 Convert Page</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Convery.png" alt="DocToAudio Convert page showing document import, translation, TTS config, preview, and queue">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">🔄 Conversion in Progress</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Conversaion.png" alt="DocToAudio active conversion with progress bar and TTS engine status">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">📚 Audiobook Library</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Audiolibary.png" alt="DocToAudio Library page showing audiobook table with search, sort, and playback controls">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">⚙️ Settings</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Settings.png" alt="DocToAudio Settings page with General, OpenAI TTS, Local TTS, Appearance, and License sections">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">🔑 License</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/License.png" alt="DocToAudio License page with activation form and trial button">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKFLOW SECTION -->
+            <div id="workflow" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Workflow</span>
+                    <h2 class="section-title">Typical Use Cases</h2>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📕</div>
+                        <h3>Basic: Document to Audiobook</h3>
+                        <p style="margin-top: 0.5rem;">1. Drag PDF to Convert page<br>2. Select Edge TTS (free, zero setup)<br>3. Click "Generate Preview" to test<br>4. Click "Add to Conversion Queue"<br>5. Find audiobook in Library → play</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🌐</div>
+                        <h3>Multilingual: Translate + Convert</h3>
+                        <p style="margin-top: 0.5rem;">1. Import Spanish EPUB<br>2. Language auto-detects as "Spanish"<br>3. Select "English (en)" as output<br>4. Click "🌐 Translate Document"<br>5. Text is translated + TTS-optimized<br>6. Add to queue → "Title (English).mp3"</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🎙️</div>
+                        <h3>Batch: Queue Multiple Docs</h3>
+                        <p style="margin-top: 0.5rem;">1. Import and configure first document<br>2. Add to queue → Queue button<br>3. Import second document, change settings<br>4. Add to queue<br>5. Switch to Queue page to monitor all jobs<br>6. Retry any failures with one click</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TECHNICAL SECTION -->
+            <div style="margin-top: 3rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Technical Specifications</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Supported Formats</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>• PDF (PyMuPDF)</li>
+                            <li>• DOCX (python-docx)</li>
+                            <li>• EPUB (ebooklib + BeautifulSoup)</li>
+                            <li>• TXT, RTF</li>
+                            <li>• Clipboard paste</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Audio Output</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>• MP3 (128k–320k)</li>
+                            <li>• WAV</li>
+                            <li>• OGG</li>
+                            <li>• Auto-naming with target language</li>
+                            <li>• Chapter-aware chunking</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Tech Stack</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>• Python 3.11+ / PyQt6</li>
+                            <li>• pyttsx3 + edge-tts + openai</li>
+                            <li>• deep-translator + langdetect</li>
+                            <li>• SQLite database</li>
+                            <li>• PyInstaller for builds</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Data Storage</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>• Config: %APPDATA%\WovenModel\</li>
+                            <li>• Library DB: SQLite</li>
+                            <li>• Translation Cache: JSON</li>
+                            <li>• Preview Cache: %TEMP%</li>
+                            <li>• Default Output: AppData</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GET STARTED SECTION -->
+            <div id="install" style="margin-top: 3rem;">
+                <div class="cta-section">
+                    <h2>Ready to Convert?</h2>
+                    <p>DocToAudio is available now. Get started with a 14-day free trial — all features unlocked, including the speech optimizer and all three TTS engines.</p>
+                    <div class="btn-row">
+                        <a href="https://www.wovenmodel.com/contact" class="btn btn-primary">📥 Download DocToAudio</a>
+                        <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="btn btn-secondary" target="_blank" rel="noopener">📅 Book a Demo</a>
+                    </div>
+                    <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--color-gray-500);">
+                        Windows only · Python 3.10+ required · Edge TTS free forever · No account needed for trial
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <p style="margin-bottom: 0.5rem;"><strong>Woven Model</strong> — Building Intelligent Systems That Scale</p>
+            <p style="margin-bottom: 0;">© 2026 Woven Model. All rights reserved. | Technology consulting by Jude Yearwood</p>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Update active tab styling
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
