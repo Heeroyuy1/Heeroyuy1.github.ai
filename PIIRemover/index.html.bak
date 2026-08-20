@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Woven Model PII Remover — Detect, review, and redact sensitive data from text before it reaches AI prompts. On-device, zero cloud uploads.">
+    <meta name="keywords" content="PII remover, privacy tool, data redaction, AI prompt safety, text sanitizer, SSN detection, credit card detection, on-device privacy, Woven Model">
+    <meta name="author" content="Jude Yearwood">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Woven Model PII Remover — On-Device Privacy Shield | Woven Model">
+    <meta property="og:description" content="Detect, review, and redact sensitive data from text before it reaches AI prompts. Runs entirely locally — nothing leaves your machine.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wovenmodel.com/PIIRemover">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../favicon.ico">
+    <title>Woven Model PII Remover — On-Device Privacy Shield | Woven Model</title>
+
+    <style>
+        :root {
+            --color-navy-950: #0a0f1e;
+            --color-navy-900: #0d1428;
+            --color-navy-800: #111b36;
+            --color-navy-700: #162244;
+            --color-navy-600: #1c2d56;
+            --color-navy-500: #243a6b;
+            --color-cyan-400: #22d3ee;
+            --color-cyan-500: #06b6d4;
+            --color-cyan-600: #0891b2;
+            --color-cyan-700: #0e7490;
+            --color-white: #ffffff;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
+            --color-green-400: #34d399;
+            --color-green-500: #10b981;
+            --color-red-400: #f87171;
+            --color-red-500: #ef4444;
+            --color-amber-400: #fbbf24;
+            --color-amber-500: #f59e0b;
+            --glass-bg: rgba(17, 27, 54, 0.6);
+            --glass-border: rgba(34, 211, 238, 0.15);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glass-blur: blur(16px);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --transition-fast: 150ms ease;
+            --transition-normal: 300ms ease;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --max-width: 1200px;
+            --nav-height: 72px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-navy-950);
+            color: var(--color-gray-200);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; height: auto; display: block; }
+        a { color: var(--color-cyan-400); text-decoration: none; transition: color var(--transition-fast); }
+        a:hover { color: var(--color-cyan-500); }
+        h1, h2, h3, h4, h5, h6 { line-height: 1.25; color: var(--color-white); }
+        h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; }
+        h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; }
+        h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        code {
+            font-family: var(--font-mono);
+            background: rgba(255,255,255,0.06);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        pre {
+            background: var(--color-navy-800);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        th {
+            background: var(--color-navy-700);
+            padding: 0.7rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-white);
+            border-bottom: 2px solid var(--color-cyan-600);
+        }
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--color-gray-300);
+        }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            height: var(--nav-height);
+            background: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 1px 0 var(--glass-border);
+        }
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--color-white);
+            letter-spacing: -0.02em;
+        }
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-cyan-400), var(--color-cyan-600));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--color-navy-950);
+            flex-shrink: 0;
+        }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a {
+            color: var(--color-gray-300);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+        .nav-links a:hover { color: var(--color-white); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950) !important;
+            padding: 0.55rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600 !important;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35); }
+
+        .page-header {
+            padding: calc(var(--nav-height) + 3rem) 1.5rem 3rem;
+            background: linear-gradient(180deg, var(--color-navy-900) 0%, var(--color-navy-950) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.06), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .page-header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .page-breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-gray-500);
+            margin-bottom: 1.5rem;
+        }
+        .page-breadcrumb a { color: var(--color-gray-400); }
+        .page-breadcrumb span { color: var(--color-gray-500); }
+        .page-header h1 { margin-bottom: 0.75rem; }
+        .page-header .subtitle {
+            font-size: 1.1rem;
+            color: var(--color-gray-400);
+            max-width: 700px;
+        }
+        .page-header .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-top: 1.5rem;
+        }
+        .page-header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.35rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-cyan-400);
+        }
+        .page-header .badge.green { color: var(--color-green-400); background: rgba(16, 185, 129, 0.1); }
+        .page-header .badge.red { color: var(--color-red-400); background: rgba(239, 68, 68, 0.1); }
+        .page-header .badge.amber { color: var(--color-amber-400); background: rgba(251, 191, 36, 0.1); }
+
+        .section {
+            padding: 4rem 1.5rem;
+            position: relative;
+        }
+        .section-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+        .section-header { margin-bottom: 2.5rem; }
+        .section-label {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-cyan-400);
+            margin-bottom: 0.5rem;
+        }
+        .section-title { margin-bottom: 0.5rem; }
+        .section-subtitle { color: var(--color-gray-400); max-width: 700px; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.2rem;
+        }
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            transition: all var(--transition-normal);
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .feature-card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 { margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .feature-card p { color: var(--color-gray-400); font-size: 0.88rem; margin: 0; }
+
+        .tab-grid {
+            display: grid;
+            gap: 2rem;
+        }
+        .tab-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        .tab-card:hover { border-color: rgba(34, 211, 238, 0.25); }
+        .tab-card-header {
+            background: var(--color-navy-700);
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .tab-card-header h3 { font-size: 1.1rem; margin: 0; }
+        .tab-card-body { padding: 1.8rem; }
+        .tab-card-body p { color: var(--color-gray-300); font-size: 0.92rem; }
+        .tab-card-body ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .tab-card-body li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+            color: var(--color-gray-300);
+        }
+        .tab-card-body li::before {
+            content: '\25B8';
+            color: var(--color-cyan-400);
+            flex-shrink: 0;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+        .risk-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.8rem;
+            transition: all var(--transition-normal);
+        }
+        .risk-card:hover { transform: translateY(-3px); border-color: rgba(34, 211, 238, 0.3); }
+        .risk-card-icon { font-size: 2.2rem; margin-bottom: 0.8rem; }
+        .risk-card h3 { margin-bottom: 0.3rem; }
+        .risk-card .risk-level {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .risk-card .risk-level.high { color: var(--color-red-400); }
+        .risk-card .risk-level.medium { color: var(--color-amber-400); }
+        .risk-card .risk-level.low { color: var(--color-cyan-400); }
+        .risk-card p { color: var(--color-gray-400); font-size: 0.85rem; margin: 0; }
+
+        .comparison-table { font-size: 0.85rem; }
+        .comparison-table td:first-child { font-weight: 500; }
+        .comparison-table td:nth-child(2) { text-align: center; }
+        .comparison-table td:nth-child(3) { text-align: center; }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .highlight-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            transition: all var(--transition-normal);
+        }
+        .highlight-card:hover { border-color: rgba(34, 211, 238, 0.25); }
+        .highlight-card h4 { color: var(--color-cyan-400); font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .highlight-card p { color: var(--color-gray-400); font-size: 0.85rem; margin: 0; }
+
+        .screenshot-wrap {
+            margin: 1.5rem 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .screenshot-wrap img { width: 100%; display: block; }
+
+        .workflow-steps {
+            counter-reset: step;
+        }
+        .workflow-step {
+            display: flex;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .workflow-step:last-child { border-bottom: none; }
+        .workflow-step-num {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--color-cyan-400);
+        }
+        .workflow-step-content h4 { font-size: 0.95rem; color: var(--color-white); margin-bottom: 0.2rem; }
+        .workflow-step-content p { color: var(--color-gray-400); font-size: 0.85rem; margin: 0; }
+
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-navy-800), var(--color-navy-700));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .cta-section h2 { margin-bottom: 0.75rem; }
+        .cta-section p { color: var(--color-gray-400); max-width: 500px; margin: 0 auto 1.5rem; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            font-family: var(--font-sans);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-cyan-500), var(--color-cyan-600));
+            color: var(--color-navy-950);
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(6, 182, 212, 0.4);
+            color: var(--color-navy-950);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-white);
+            border: 1px solid var(--color-gray-600);
+        }
+        .btn-secondary:hover { border-color: var(--color-cyan-400); color: var(--color-cyan-400); transform: translateY(-2px); }
+        .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+        .footer {
+            background: var(--color-navy-900);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 1.5rem 1.5rem;
+        }
+        .footer-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            text-align: center;
+            color: var(--color-gray-600);
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--color-gray-400);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: color var(--transition-fast);
+        }
+        .back-link:hover { color: var(--color-cyan-400); }
+        .back-link::before { content: '\2190'; }
+
+        .page-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 0.5rem;
+        }
+        .page-tab {
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-gray-400);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            background: none;
+            font-family: var(--font-sans);
+        }
+        .page-tab:hover { color: var(--color-white); }
+        .page-tab.active {
+            color: var(--color-cyan-400);
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        @media (max-width: 768px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .risk-grid { grid-template-columns: 1fr; }
+            .highlights-grid { grid-template-columns: 1fr; }
+            table { font-size: 0.8rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            .cta-section { padding: 2rem 1.2rem; }
+            .tab-card-header { padding: 1rem 1.2rem; }
+            .tab-card-body { padding: 1.2rem; }
+            .nav-links { display: none; }
+            .workflow-step { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="https://www.wovenmodel.com/" class="nav-logo" aria-label="Woven Model Home">
+                <div class="nav-logo-icon">WM</div>
+                Woven Model
+            </a>
+            <div class="nav-links">
+                <a href="https://www.wovenmodel.com/#products">Products</a>
+                <a href="https://www.wovenmodel.com/#services">Services</a>
+                <a href="https://www.wovenmodel.com/#about">About</a>
+                <a href="https://calendar.app.google/VcNdH476r22az1kj7" class="nav-cta" target="_blank" rel="noopener noreferrer">Book a Meeting</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-breadcrumb">
+                <a href="https://www.wovenmodel.com/">Home</a>
+                <span>/</span>
+                <a href="https://www.wovenmodel.com/#products">Products</a>
+                <span>/</span>
+                <span>PII Remover</span>
+            </div>
+            <a href="https://www.wovenmodel.com/#products" class="back-link">Back to Products</a>
+            <h1>Woven Model PII Remover &mdash; On-Device Privacy Shield</h1>
+            <p class="subtitle">
+                Detect, review, and redact sensitive data from text before it reaches AI prompts, documents, or
+                workflows. Runs <strong>entirely locally</strong> &mdash; nothing leaves your machine. Features
+                <strong>risk-level classification</strong>, toggle-based review, and Original/Cleaned comparison.
+            </p>
+            <div class="badge-row">
+                <span class="badge">&#9889; Desktop App</span>
+                <span class="badge red">&#128274; On-Device Only</span>
+                <span class="badge green">&#9989; Zero Cloud Uploads</span>
+                <span class="badge amber">&#9888; Risk-Level Classification</span>
+                <span class="badge">&#128203; Toggle-Based Review</span>
+                <span class="badge">&#128196; Original / Cleaned Comparison</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" style="padding-top: 2rem;">
+        <div class="section-inner">
+
+            <!-- TABS -->
+            <div class="page-tabs">
+                <span class="page-tab active" onclick="scrollToSection('overview')">Overview</span>
+                <span class="page-tab" onclick="scrollToSection('features')">Features</span>
+                <span class="page-tab" onclick="scrollToSection('risk')">Risk Levels</span>
+                <span class="page-tab" onclick="scrollToSection('screenshots')">Screenshots</span>
+                <span class="page-tab" onclick="scrollToSection('workflow')">Workflow</span>
+                <span class="page-tab" onclick="scrollToSection('install')">Get Started</span>
+            </div>
+
+            <!-- OVERVIEW -->
+            <div id="overview">
+                <div class="section-header">
+                    <span class="section-label">Overview</span>
+                    <h2 class="section-title">What Is Woven Model PII Remover?</h2>
+                    <p class="section-subtitle">
+                        An on-device desktop tool that scans pasted text for likely PII, highlights matches for
+                        review with risk levels, lets you toggle individual detections, and produces cleaned output
+                        after confirmation. No uploads &mdash; no web server &mdash; everything runs locally.
+                    </p>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128274;</div>
+                        <h3>100% Local Detection</h3>
+                        <p>All detection and redaction runs locally using regex and heuristic patterns. No data ever leaves your device. The "Processed Locally" badge reflects actual behavior.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128680;</div>
+                        <h3>Risk-Level Classification</h3>
+                        <p>Every detection is classified as High (SSN, credit card, bank account), Medium (email, phone, address, DOB, IP), or Low (name, account ID, ZIP) &mdash; with explanations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#9745;</div>
+                        <h3>Toggle-Based Review</h3>
+                        <p>Reject false positives before redaction. Toggle individual detections on/off &mdash; only confirmed selections are redacted. Full control over what gets cleaned.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128269;</div>
+                        <h3>Highlighted Preview</h3>
+                        <p>See exactly what was found with risk-colored underlines directly in the text. High = red, Medium = amber, Low = cyan. Clear visual feedback before you redact.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128196;</div>
+                        <h3>Original / Cleaned Comparison</h3>
+                        <p>After redaction, toggle between the original and cleaned views to verify results. One-click copy the cleaned text to your clipboard.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128295;</div>
+                        <h3>Easy to Use</h3>
+                        <p>Simple paste-and-click workflow. No configuration needed. Clean, intuitive interface with clear visual feedback at every step.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREENSHOTS PREVIEW -->
+            <div style="margin-top: 3rem;">
+                <div class="section-header">
+                    <span class="section-label">At a Glance</span>
+                    <h2 class="section-title">The PII Remover Interface</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem;">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128221;</div>
+                        <h3>Paste & Detect</h3>
+                        <p>Paste your text into the editor and click "Detect PII". The app scans locally using regex and heuristic patterns &mdash; zero cloud APIs involved.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128200;</div>
+                        <h3>Review with Risk Levels</h3>
+                        <p>Review detections in the Security Summary bar with high/medium/low counts. Each detection shows a risk badge, masked value, and explanation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">&#128274;</div>
+                        <h3>Redact & Copy</h3>
+                        <p>Toggle detections on/off, click "Remove Selected PII", confirm, then compare Original vs Cleaned. Copy the clean text with one click.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURES -->
+            <div id="features" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Features</span>
+                    <h2 class="section-title">Every Feature, Explained</h2>
+                    <p class="section-subtitle">A complete breakdown of the detection engine, review workflow, and redaction pipeline.</p>
+                </div>
+
+                <div class="tab-grid">
+
+                    <!-- Detection Engine -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">&#128269;</span>
+                            <h3>PII Detection Engine</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Scan text locally for 11 categories of sensitive information using regex patterns and heuristic name detection.</p>
+                            <h4 style="color: white; margin-top: 1rem;">Detection Categories</h4>
+                            <ul>
+                                <li><strong>Email Addresses</strong> &mdash; Standard email pattern matching</li>
+                                <li><strong>US Phone Numbers</strong> &mdash; Common US phone formats</li>
+                                <li><strong>SSNs</strong> (###-##-####) &mdash; High risk, flagged for immediate review</li>
+                                <li><strong>Credit Cards</strong> &mdash; Luhn-validated, high risk</li>
+                                <li><strong>Bank Account Numbers</strong> &mdash; Pattern-based, high risk</li>
+                                <li><strong>IP Addresses</strong> (IPv4) &mdash; Medium risk</li>
+                                <li><strong>US Street Addresses</strong> &mdash; Medium risk</li>
+                                <li><strong>Date of Birth</strong> &mdash; Medium risk, context-aware</li>
+                                <li><strong>ZIP / Postal Codes</strong> &mdash; Low risk</li>
+                                <li><strong>Account / Customer IDs</strong> &mdash; Low risk, pattern-based</li>
+                                <li><strong>Person Names</strong> &mdash; AI-enhanced heuristic detection, low risk</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Review Workflow -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">&#128203;</span>
+                            <h3>Review & Toggle Workflow</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Give users full control over what gets redacted. Every detection is reviewable and toggleable.</p>
+                            <h4 style="color: white; margin-top: 1rem;">How It Works</h4>
+                            <ul>
+                                <li><strong>Security Summary Bar:</strong> Shows total detections + breakdown by risk level (High / Medium / Low)</li>
+                                <li><strong>Detection List:</strong> Each detection shows checkbox, risk badge, masked value, and explanation</li>
+                                <li><strong>Highlighted Text:</strong> Risk-colored underlines directly in the input text</li>
+                                <li><strong>Select All / Deselect All:</strong> Bulk toggle controls for convenience</li>
+                                <li><strong>Confirm Before Redact:</strong> "Remove Selected PII" requires user confirmation</li>
+                                <li><strong>Compare View:</strong> Toggle between Original and Cleaned text after redaction</li>
+                                <li><strong>Copy:</strong> Button or Enter key copies cleaned text to clipboard</li>
+                                <li><strong>Clear:</strong> Resets everything for a fresh scan</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Model -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">&#128737;</span>
+                            <h3>Privacy & Security</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Your sensitive data never leaves your device.</p>
+                            <h4 style="color: white; margin-top: 1rem;">What We Guarantee</h4>
+                            <ul>
+                                <li><strong>All detection runs locally</strong> &mdash; nothing is sent anywhere</li>
+                                <li><strong>No internet connection</strong> needed for PII detection</li>
+                                <li><strong>No cloud uploads</strong> &mdash; your text stays on your machine</li>
+                                <li><strong>AI-enhanced detection</strong> uses local pattern matching only</li>
+                                <li><strong>"Processed Locally" badge</strong> reflects how the app actually works</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Licensing -->
+                    <div class="tab-card">
+                        <div class="tab-card-header">
+                            <span style="font-size: 1.3rem;">&#128273;</span>
+                        <h3>Licensing & Availability</h3>
+                        </div>
+                        <div class="tab-card-body">
+                            <p><strong>Purpose:</strong> Easy access with flexible options for every user.</p>
+                            <h4 style="color: white; margin-top: 1rem;">How to Get It</h4>
+                            <ul>
+                                <li><strong>Installer:</strong> Double-click setup &mdash; simple Windows installation</li>
+                                <li><strong>Portable:</strong> Run without installing &mdash; no admin rights needed</li>
+                                <li><strong>Free trial</strong> included with all features unlocked</li>
+                                <li><strong>License key activation</strong> for continued use after trial</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RISK LEVELS -->
+            <div id="risk" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Risk Levels</span>
+                    <h2 class="section-title">Three Levels of Sensitivity</h2>
+                    <p class="section-subtitle">Every detection is classified by severity. The Security Summary bar shows counts at a glance, and each item in the detection list carries a colored risk badge.</p>
+                </div>
+
+                <div class="risk-grid">
+                    <div class="risk-card">
+                        <div class="risk-card-icon">&#128308;</div>
+                        <h3>High Risk</h3>
+                        <div class="risk-level high">Red &mdash; Immediate Action</div>
+                        <p>Direct financial identity risk. If exposed, could lead to identity theft, financial fraud, or account compromise.</p>
+                        <ul style="list-style:none; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-red-400);">&#9679;</span> SSN (Social Security Number)</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-red-400);">&#9679;</span> Credit Card Number (Luhn-validated)</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-red-400);">&#9679;</span> Bank Account Number</li>
+                        </ul>
+                    </div>
+                    <div class="risk-card">
+                        <div class="risk-card-icon">&#128992;</div>
+                        <h3>Medium Risk</h3>
+                        <div class="risk-level medium">Amber &mdash; Review Recommended</div>
+                        <p>Personal contact and location data. Could be used for social engineering, phishing, or targeted attacks.</p>
+                        <ul style="list-style:none; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-amber-400);">&#9679;</span> Email Address</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-amber-400);">&#9679;</span> US Phone Number</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-amber-400);">&#9679;</span> US Street Address</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-amber-400);">&#9679;</span> Date of Birth</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-amber-400);">&#9679;</span> IP Address (IPv4)</li>
+                        </ul>
+                    </div>
+                    <div class="risk-card">
+                        <div class="risk-card-icon">&#128311;</div>
+                        <h3>Low Risk</h3>
+                        <div class="risk-level low">Cyan &mdash; Optional Review</div>
+                        <p>Identifiers and contextual data. Lower direct risk but could aid reconnaissance or link data across sources.</p>
+                        <ul style="list-style:none; margin-top: 1rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-cyan-400);">&#9679;</span> Person Name (AI-enhanced)</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-cyan-400);">&#9679;</span> ZIP / Postal Code</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-cyan-400);">&#9679;</span> Account / Customer ID</li>
+                            <li style="display:flex; gap:0.5rem; font-size:0.88rem; color:var(--color-gray-300);"><span style="color:var(--color-cyan-400);">&#9679;</span> Order / Case / Reference ID</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem;">Detection Method Comparison</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="comparison-table">
+                            <tr>
+                                <th>Capability</th>
+                                <th>PII Remover (Local)</th>
+                                <th>Cloud-Based Tools</th>
+                            </tr>
+                            <tr><td>Data leaves device</td><td>&#10060; Never</td><td>&#9989; Yes</td></tr>
+                            <tr><td>Internet required</td><td>&#10060; No</td><td>&#9989; Yes</td></tr>
+                            <tr><td>Latency</td><td>&#9889; Instant</td><td>&#8987; Network-dependent</td></tr>
+                            <tr><td>Cost</td><td><strong style="color: var(--color-green-400);">One-time license</strong></td><td>Per-request or subscription</td></tr>
+                            <tr><td>Risk classification</td><td>&#9989; 3 levels + explanations</td><td>Varies</td></tr>
+                            <tr><td>Toggle / review</td><td>&#9989; Per-detection</td><td>Typically all-or-nothing</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREENSHOTS -->
+            <div id="screenshots" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Screenshots</span>
+                    <h2 class="section-title">See the App in Action</h2>
+                    <p class="section-subtitle">Real screenshots from the running application showing the detection and redaction workflow.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128270; Main Interface</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/PII remover main.png" alt="Woven Model PII Remover main interface showing text input, detect PII button, and security summary">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128269; Detection Demo</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Demo1.png" alt="PII detection demo showing highlighted matches with risk levels">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#9989; Redacted Output</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Demo2.png" alt="PII Remover after redaction showing cleaned text output">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128203; Redacted with Answers</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/Demo2Answers.png" alt="PII Remover showing redacted text with original values visible for comparison">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128196; Example 1</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/example1.png" alt="PII Remover example 1 showing detection of multiple PII types">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128196; Example 1 Results</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/example1answers.png" alt="PII Remover example 1 showing redacted results">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128196; Example 2</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/example2.png" alt="PII Remover example 2 showing another detection scenario">
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: var(--color-white);">&#128196; Example 2 Results</h4>
+                        <div class="screenshot-wrap">
+                            <img src="assets/example2answers.png" alt="PII Remover example 2 showing redacted results">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WORKFLOW -->
+            <div id="workflow" style="margin-top: 4rem;">
+                <div class="section-header">
+                    <span class="section-label">Workflow</span>
+                    <h2 class="section-title">How to Use PII Remover</h2>
+                    <p class="section-subtitle">A step-by-step walkthrough of the complete detect, review, and redact workflow.</p>
+                </div>
+
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">1</div>
+                        <div class="workflow-step-content">
+                            <h4>Paste or Enter Text</h4>
+                            <p>Paste your prompt, document, or any text containing potential sensitive data into the editor panel.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">2</div>
+                        <div class="workflow-step-content">
+                            <h4>Click "Detect PII"</h4>
+                            <p>The app scans locally using regex patterns and heuristic name detection. All processing happens on-device &mdash; zero network calls.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">3</div>
+                        <div class="workflow-step-content">
+                            <h4>Review the Security Summary</h4>
+                            <p>The Security Summary bar shows total detections with counts by risk level (High / Medium / Low). Each detection in the list shows a risk badge, masked value, and explanation.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">4</div>
+                        <div class="workflow-step-content">
+                            <h4>Toggle Detections On/Off</h4>
+                            <p>Reject false positives before redaction. Use Select All / Deselect All for bulk operations, or toggle individual items. The highlighted text updates in real time.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">5</div>
+                        <div class="workflow-step-content">
+                            <h4>Click "Remove Selected PII"</h4>
+                            <p>Confirm the prompt. The app redacts all confirmed selections and shows the cleaned output with an Original / Cleaned comparison toggle.</p>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-num">6</div>
+                        <div class="workflow-step-content">
+                            <h4>Copy Cleaned Text</h4>
+                            <p>Click "Copy Cleaned Text" or press Enter while the output is focused. The sanitized text is now safe to paste into AI prompts, documents, or workflows.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div class="highlight-card">
+                        <h4>&#128270; Highlighted Text</h4>
+                        <p>Risk-colored underlines appear directly in your text: red for high risk, amber for medium, cyan for low. See exactly what was found before you redact.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <h4>&#128260; Live Summary Updates</h4>
+                        <p>Toggle a detection on/off and the Security Summary counts update instantly. The highlighted text also reflects the change in real time.</p>
+                    </div>
+                    <div class="highlight-card">
+                        <h4>&#128196; Compare Toggle</h4>
+                        <p>After redaction, switch between Original and Cleaned views to verify that only the right data was removed. Nothing hidden, nothing unexpected.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TECHNICAL -->
+            <div style="margin-top: 3rem; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 2rem;">
+                <h3 style="margin-bottom: 1.5rem;">Technical Specifications</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Detection Engine</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>&#8226; Regex-based pattern matching</li>
+                            <li>&#8226; Heuristic name detection (AI-enhanced)</li>
+                            <li>&#8226; Luhn-validated credit card check</li>
+                            <li>&#8226; Risk-level classification (3 tiers)</li>
+                            <li>&#8226; 11 PII categories</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Windows Requirements</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>&#8226; Windows 10 or later (64-bit)</li>
+                            <li>&#8226; Installer or portable &mdash; your choice</li>
+                            <li>&#8226; No internet required for PII detection</li>
+                            <li>&#8226; No additional software needed</li>
+                            <li>&#8226; Lightweight, runs locally on your device</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">What You Get</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>&#8226; PII detection across 11 categories</li>
+                            <li>&#8226; Risk-level classification (high/medium/low)</li>
+                            <li>&#8226; Toggle-based review with highlighted preview</li>
+                            <li>&#8226; Original / Cleaned comparison view</li>
+                            <li>&#8226; One-click copy to clipboard</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-cyan-400); margin-bottom: 0.5rem;">Distribution</h4>
+                        <ul style="list-style: none; font-size: 0.85rem; color: var(--color-gray-300);">
+                            <li>&#8226; Setup installer (.exe)</li>
+                            <li>&#8226; Portable build (.exe)</li>
+                            <li>&#8226; License key activation</li>
+                            <li>&#8226; Trial mode built-in</li>
+                            <li>&#8226; Woven Model glass morphism UI</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GET STARTED -->
+            <div id="install" style="margin-top: 3rem;">
+                <div class="cta-section">
+                    <h2>Ready to Protect Your Prompts?</h2>
+                    <p>Woven Model PII Remover is available now. Get started with a trial &mdash; all features unlocked, including risk classification, toggle review, and the full redaction pipeline.</p>
+                    <div class="btn-row">
+                        <a href="https://www.wovenmodel.com/#contact" class="btn btn-primary">&#128229; Download PII Remover</a>
+                        <a href="https://woven-model-purchase-system-production.up.railway.app/" class="btn btn-secondary" target="_blank" rel="noopener">&#128273; Get License</a>
+                    </div>
+                    <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--color-gray-500);">
+                        Windows only &middot; Electron app &middot; No internet required for detection &middot; 100% local processing
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <p style="margin-bottom: 0.5rem;"><strong>Woven Model</strong> &mdash; Building Intelligent Systems That Scale</p>
+            <p style="margin-bottom: 0;">&copy; 2026 Woven Model. All rights reserved. | Technology consulting by Jude Yearwood</p>
+        </div>
+    </footer>
+
+    <script>
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Update active tab styling
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
